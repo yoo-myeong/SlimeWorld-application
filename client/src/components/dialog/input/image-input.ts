@@ -1,8 +1,10 @@
-import { formContainer } from "../dialog.js";
-import { BaseComponent } from "./../../component.js";
+import { BaseComponent, Component } from "./../../component.js";
 
-
-export class ImageSectionInput extends BaseComponent<HTMLElement> implements formContainer{
+export interface ImageContainer extends Component {
+  title: string;
+  url: string;
+}
+export class ImageSectionInput extends BaseComponent<HTMLElement> implements ImageContainer {
   constructor() {
     super(`<div>
             <div class="form__container">
@@ -16,11 +18,11 @@ export class ImageSectionInput extends BaseComponent<HTMLElement> implements for
         </div>`);
   }
 
-  get title(): string {
+  public get title(): string {
     const element = this.element.querySelector("#title")! as HTMLInputElement;
     return element.value;
   }
-  get url(): string {
+  public get url(): string {
     const element = this.element.querySelector("#url")! as HTMLInputElement;
     return element.value;
   }

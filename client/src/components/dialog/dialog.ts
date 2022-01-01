@@ -1,34 +1,15 @@
-import { Composable, PageComposable } from "./../page/page.js";
+import { Composable } from "./../page/page.js";
 import { BaseComponent, Component } from "./../component.js";
 
 type OnCloseListener = () => void;
 type OnSubmitListener = () => void;
 
-export interface formContainer extends Component {
-  title: string;
-  url: string;
-}
-type formContainerConstructor = {
-  new (): formContainer;
-};
-type MediaComponentConstructor = {
-  new (title: string, url: string): Component;
-};
 export interface dialogContainer extends Component, Composable {
-  setOnCloseListenr(listener: OnCloseListener): void;
+  setOnCloseListenr(parent: HTMLElement): void;
   setOnSubmitListenr(listener: OnSubmitListener): void;
-  createDialog(
-    Section: formContainerConstructor,
-    Media: MediaComponentConstructor,
-    Page: PageComposable,
-    DialogRoot: HTMLElement
-  ): void;
 }
 
-export class InputDialog
-  extends BaseComponent<HTMLElement>
-  implements dialogContainer
-{
+export class InputDialog extends BaseComponent<HTMLElement> implements dialogContainer {
   private closeListener?: OnCloseListener;
   private submitListener?: OnSubmitListener;
 
@@ -46,41 +27,29 @@ export class InputDialog
       this.closeListener && this.closeListener();
     };
 
-    const submitBtn = this.element.querySelector(
-      ".dialog__submit"
-    )! as HTMLElement;
+    const submitBtn = this.element.querySelector(".dialog__submit")! as HTMLElement;
     submitBtn.onclick = () => {
       this.submitListener && this.submitListener();
     };
   }
 
-  setOnCloseListenr(listener: OnCloseListener) {
-    this.closeListener = listener;
+  setOnCloseListenr(parent: HTMLElement) {
+    this.closeListener = () => {
+      this.removeFrom(parent);
+    };
   }
+
   setOnSubmitListenr(listener: OnSubmitListener) {
     this.submitListener = listener;
   }
+
   addChild(child: Component) {
     const body = this.element.querySelector("#dialog__body")! as HTMLElement;
     child.attachTo(body);
   }
 
-  createDialog(
-    Section: formContainerConstructor,
-    Media: MediaComponentConstructor,
-    Page: PageComposable,
-    DialogRoot: HTMLElement
-  ) {
-    const section = new Section();
-    this.addChild(section);
-    this.attachTo(DialogRoot);
-    this.setOnCloseListenr(() => {
-      this.removeFrom(DialogRoot);
-    });
-    this.setOnSubmitListenr(() => {
-      const media = new Media(section.title, section.url);
-      Page.addItem(media);
-      this.removeFrom(DialogRoot);
-    });
+  attachTo(parent: HTMLElement): void {
+    super.attachTo(parent);
+    this.setOnCloseListenr(parent);
   }
 }
