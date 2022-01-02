@@ -7,8 +7,14 @@ import { PageComponent, PageComposable, PageItemComponent } from "./components/p
 import { ButtonComponent } from "./components/upload/button/button.js";
 import { UploadContainer } from "./components/upload/upload.js";
 import { InputDialog } from "./components/dialog/dialog.js";
+import { LoginContainer, LoginSectionInput } from "./components/dialog/input/login-input.js";
+import { SearchContainer, SearchSectionInput } from "./components/dialog/input/search-input.js";
 
 type formContainerConstructor = {
+  new (): LoginContainer | SearchContainer;
+};
+
+type mediaFormContainerConstructor = {
   new (): ImageContainer | VideoContainer;
 };
 
@@ -33,13 +39,24 @@ class App {
     videoBtn.setOnClickListener(this.GetMediaButtonEventListener(VideoSectionInput, VideoComponent));
 
     const loginBtn = document.querySelector("#login__button")! as HTMLButtonElement;
-    loginBtn.onclick = this.GetMediaButtonEventListener(ImageSectionInput, ImageComponent);
+    loginBtn.onclick = this.GetButtonDialogEventListener(LoginSectionInput);
+    const searchBtn = document.querySelector("#search__button")! as HTMLButtonElement;
+    searchBtn.onclick = this.GetButtonDialogEventListener(SearchSectionInput);
   }
 
-  GetMediaButtonEventListener(formConstructor: formContainerConstructor, mediaConstructor: mediaComponentConstructor): OnEventListener {
+  GetButtonDialogEventListener(formConstructor: formContainerConstructor) {
     return () => {
       const dialog = new InputDialog();
       const form = new formConstructor();
+      dialog.addChild(form);
+      dialog.attachTo(this.dialogRoot);
+    };
+  }
+
+  GetMediaButtonEventListener(mediaFormConstructor: mediaFormContainerConstructor, mediaConstructor: mediaComponentConstructor): OnEventListener {
+    return () => {
+      const dialog = new InputDialog();
+      const form = new mediaFormConstructor();
       dialog.addChild(form);
       dialog.attachTo(this.dialogRoot);
       dialog.setOnSubmitListenr(() => {

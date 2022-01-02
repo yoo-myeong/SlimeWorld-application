@@ -23,6 +23,7 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Sec
     super(`<li class="page-item">
             <div class="page-item__controls">
               <button class="close">&times;</button>
+              <button class="like">좋아요버튼</button>
             </div>
             <section class="page-item__body"></section>
           </li>`);
