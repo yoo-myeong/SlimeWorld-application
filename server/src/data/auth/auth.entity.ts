@@ -1,22 +1,26 @@
-import { Column, PrimaryGeneratedColumn, Entity, getRepository } from "typeorm";
+import { Column, PrimaryGeneratedColumn, Entity } from "typeorm";
+import "express-async-errors";
+import { ValidationEntity } from "../validation/validation.js";
+import { IsEmail } from "class-validator";
 
 type Position = "seller" | "buyer";
-type SingupData = {
+export type SingupData = {
   email: string;
-  useranem: string;
+  username: string;
   password: string;
   position: Position;
 };
 
 export interface UserEntity {
-  signup(data: SingupData): Promise<Object>;
+  createUser(data: SingupData): Promise<Object>;
 }
 
 @Entity()
-export class User implements UserEntity {
+export class User extends ValidationEntity implements UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @IsEmail()
   @Column()
   email: string;
 
@@ -29,12 +33,11 @@ export class User implements UserEntity {
   @Column()
   position: Position;
 
-  async signup(data: SingupData): Promise<Object> {
-    try {
-      const userRepository = getRepository(User);
-      return userRepository.save(data);
-    } catch (error) {
-      console.error("error");
-    }
+  async createUser(data: SingupData): Promise<Object> {
+    const keys = Object.keys(data);
+    keys.forEach((key) => {
+      this[key] = data[key];
+    });
+    return this.save();
   }
 }
