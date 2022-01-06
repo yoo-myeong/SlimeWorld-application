@@ -1,9 +1,24 @@
-import { Column, PrimaryGeneratedColumn, Entity } from "typeorm";
+import { Column, PrimaryGeneratedColumn, Entity, getRepository } from "typeorm";
+
+type Position = "seller" | "buyer";
+type SingupData = {
+  email: string;
+  useranem: string;
+  password: string;
+  position: Position;
+};
+
+export interface UserEntity {
+  signup(data: SingupData): Promise<Object>;
+}
 
 @Entity()
-export class User {
+export class User implements UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  email: string;
 
   @Column()
   username: string;
@@ -12,5 +27,14 @@ export class User {
   password: string;
 
   @Column()
-  position: string;
+  position: Position;
+
+  async signup(data: SingupData): Promise<Object> {
+    try {
+      const userRepository = getRepository(User);
+      return userRepository.save(data);
+    } catch (error) {
+      console.error("error");
+    }
+  }
 }

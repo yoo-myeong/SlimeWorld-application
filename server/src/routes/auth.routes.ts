@@ -1,18 +1,12 @@
-import express, { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import express from "express";
+import "express-async-errors";
+import { authController } from "../controller/auth.controller.js";
 import { User } from "../data/auth/auth.entity.js";
 
-const router = express.Router();
+export const router = express.Router();
 
-router.post("/", async (req: Request, res: Response) => {
-  const userRepository = getRepository(User);
-  try {
-    const result = await userRepository.save(req.body);
-    console.log(result);
-  } catch (error) {
-    console.error("error");
-  }
-  res.sendStatus(201);
+router.post("/", (req, res) => {
+  new authController(User).singup(req, res);
 });
 
 export default router;
