@@ -20,4 +20,7 @@ export const config = {
     password: required("DB_PASSWORD") as string,
     database: required("DB_DATABASE") as string,
   },
+  session: {
+    secreatKey: required("SESSION_SECREAT_KEY") as string,
+  },
 };

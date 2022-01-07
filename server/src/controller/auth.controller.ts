@@ -1,20 +1,26 @@
-import { getRepository } from "typeorm";
+import { authEntity } from "../data/auth.entity";
 import { Request, Response } from "express";
-import { SingupData, User, UserEntity } from "../data/auth/auth.entity.js";
 import bcrypt from "bcrypt";
 import { config } from "../config.js";
+import { SingupData, authEntityService, authService } from "../service/auth.service.js";
 
-type EntityConstructor = { new (): UserEntity };
+type authEntityConstructor = {
+  new (): authEntity;
+};
+
+type authServiceConstructor = {
+  new (Entity: any): authService;
+};
 
 export class authController {
-  private User: UserEntity;
+  private authService: authEntityService;
 
-  constructor(Entity: EntityConstructor) {
-    this.User = new Entity();
+  constructor(Entity: authEntityConstructor, Service: authServiceConstructor) {
+    this.authService = new Service(Entity);
   }
 
   async checkEmailExitance(email: string): Promise<boolean> {
-    const EmailInUser = await getRepository(User).findOne({ email });
+    const EmailInUser = await this.authService.getUserByEmail(email);
     return EmailInUser ? true : false;
   }
 
@@ -28,11 +34,16 @@ export class authController {
     const hashedPassword = await bcrypt.hash(password, config.bcrypt.saltRounds);
     const signupData = { email, password: hashedPassword, username, position };
     try {
-      await this.User.createUser(signupData);
+      const user = await this.authService.createUser(signupData);
       req.session.is_logined = true;
-      return res.sendStatus(201);
+      req.session.userId = user.id;
+      req.session.dispayName = user.username;
+      req.session.save(() => {
+        return res.sendStatus(201);
+      });
     } catch (error) {
       console.error(error);
+      req.session.destroy(() => {});
       return res.status(400).json("잘못된 형식의 데이터 전달");
     }
   }
