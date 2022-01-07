@@ -1,3 +1,4 @@
+import mysql2 from "mysql2/promise";
 import "reflect-metadata";
 import "express-async-errors";
 import morgan from "morgan";
@@ -7,12 +8,13 @@ import session from "express-session";
 import express, { Request, Response } from "express";
 import { createConnection } from "typeorm";
 import authRoutes from "./routes/auth.routes.js";
-import expressMySqlSession from "express-mysql-session";
+import expressMySqlSession from "express-mysql2-session";
 import { config } from "./config.js";
 
 declare module "express-session" {
   export interface SessionData {
     is_logined: boolean;
+    greeting: string;
   }
 }
 
@@ -21,8 +23,10 @@ app.use(express.json());
 app.use(morgan("tiny"));
 app.use(helmet());
 
+const connection = mysql2.createPool(config.db);
+
 const MySQLStore = expressMySqlSession(Session);
-const sessionStore = new MySQLStore(config.db);
+const sessionStore = new MySQLStore({}, connection);
 app.use(
   session({
     secret: "asdfasffdas",
