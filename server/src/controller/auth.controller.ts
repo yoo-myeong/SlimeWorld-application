@@ -29,6 +29,7 @@ export class authController {
     const signupData = { email, password: hashedPassword, username, position };
     try {
       await this.User.createUser(signupData);
+      req.session.is_logined = true;
       return res.sendStatus(201);
     } catch (error) {
       console.error(error);

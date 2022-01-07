@@ -13,4 +13,11 @@ export const config = {
   bcrypt: {
     saltRounds: parseInt(required("SALTROUNDS")),
   },
+  db: {
+    host: required("DB_HOST") as string,
+    port: parseInt(required("DB_PORT")) as number,
+    user: required("DB_USER") as string,
+    password: required("DB_PASSWORD") as string,
+    database: required("DB_DATABASE") as string,
+  },
 };
