@@ -1,35 +1,36 @@
 import { getRepository } from "typeorm";
+import { authEntity } from "../data/auth.entity";
 
-export type SingupData = {
+export type AuthData = {
   id?: number;
-  email: string;
-  username: string;
-  password: string;
-  position: "seller" | "buyer";
+  email?: string;
+  username?: string;
+  password?: string;
+  position?: "seller" | "buyer";
 };
 
 export interface authEntityService {
-  getUserByEmail(email: string): Promise<any>;
-  getUser(userId: number): Promise<any>;
-  createUser(data: SingupData): Promise<any>;
+  getUser(userId: number): Promise<authEntity>;
+  getUserByEmail(email: string): Promise<authEntity>;
+  createUser(data: AuthData): Promise<authEntity>;
 }
 
-type Constructor = { new (): {} };
+export type authEntityConstructor = { new (): authEntity };
 
 export class authService implements authEntityService {
-  constructor(private UserRepository: Constructor) {}
+  constructor(private UserRepository: authEntityConstructor) {}
 
-  async getUser(userId: number): Promise<any> {
+  async getUser(userId: number): Promise<authEntity> {
     const repository = getRepository(this.UserRepository);
     return repository.findOne({ where: { userId } });
   }
 
-  async getUserByEmail(email: string): Promise<any> {
+  async getUserByEmail(email: string): Promise<authEntity> {
     const repository = getRepository(this.UserRepository);
     return repository.findOne({ email });
   }
 
-  async createUser(data: SingupData): Promise<any> {
+  async createUser(data: AuthData): Promise<authEntity> {
     const repository = getRepository(this.UserRepository);
     const model = new this.UserRepository();
     const keys = Object.keys(data);

@@ -6,14 +6,17 @@ import { authService } from "../service/auth.service.js";
 
 export const router = express.Router();
 
-router.get("/me", (req, res) => {
-  console.log(req.session);
-  res.send("hi");
-});
-
-router.post("/", (req, res) => {
-  console.log(req.session);
+router.post("/signup", (req, res) => {
   new authController(User, authService).singup(req, res);
+});
+router.post("/login", (req, res) => {
+  new authController(User, authService).login(req, res);
+});
+router.post("/logout", (req, res) => {
+  new authController(User, authService).logout(req, res);
+});
+router.get("/me", (req, res) => {
+  new authController(User, authService).me(req, res);
 });
 
 export default router;

@@ -1,15 +1,10 @@
-import { authEntity } from "../data/auth.entity";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { config } from "../config.js";
-import { SingupData, authEntityService, authService } from "../service/auth.service.js";
-
-type authEntityConstructor = {
-  new (): authEntity;
-};
+import { AuthData, authEntityService, authService, authEntityConstructor } from "../service/auth.service.js";
 
 type authServiceConstructor = {
-  new (Entity: any): authService;
+  new (Entity: authEntityConstructor): authService;
 };
 
 export class authController {
@@ -25,26 +20,59 @@ export class authController {
   }
 
   async singup(req: Request, res: Response): Promise<Response> {
-    const { email, password, username, position }: SingupData = req.body;
+    const { email, password, username, position }: AuthData = req.body;
     if (password.length < 6 || password.length > 15) {
       return res.status(400).json("비밀번호 길이는 6 이상 15 이하");
     }
     const EmailExitance = await this.checkEmailExitance(email);
     if (EmailExitance) return res.sendStatus(409);
     const hashedPassword = await bcrypt.hash(password, config.bcrypt.saltRounds);
-    const signupData = { email, password: hashedPassword, username, position };
+    const hashedSignupData = { email, password: hashedPassword, username, position };
     try {
-      const user = await this.authService.createUser(signupData);
-      req.session.is_logined = true;
-      req.session.userId = user.id;
-      req.session.dispayName = user.username;
-      req.session.save(() => {
-        return res.sendStatus(201);
-      });
+      await this.authService.createUser(hashedSignupData);
+      return res.sendStatus(201);
     } catch (error) {
       console.error(error);
       req.session.destroy(() => {});
       return res.status(400).json("잘못된 형식의 데이터 전달");
+    }
+  }
+
+  async login(req: Request, res: Response): Promise<Response> {
+    const { email, password }: AuthData = req.body;
+    try {
+      const user = await this.authService.getUserByEmail(email);
+      if (!user) {
+        return res.sendStatus(401);
+      }
+      const compared = await bcrypt.compare(password, user.password);
+      if (!compared) {
+        return res.sendStatus(401);
+      }
+      req.session.is_logined = true;
+      req.session.userId = user.id;
+      req.session.dispayName = user.username;
+      req.session.save(() => {
+        return res.sendStatus(202);
+      });
+    } catch (error) {
+      console.error(error);
+      return res.sendStatus(400);
+    }
+  }
+
+  async logout(req: Request, res: Response): Promise<void> {
+    req.session.destroy((): Response => {
+      return res.sendStatus(200);
+    });
+  }
+
+  async me(req: Request, res: Response) {
+    if (req.session.is_logined) {
+      const username = req.session.dispayName;
+      res.status(200).json({ username });
+    } else {
+      res.sendStatus(401);
     }
   }
 }

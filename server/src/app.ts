@@ -2,37 +2,11 @@ import "reflect-metadata";
 import "express-async-errors";
 import morgan from "morgan";
 import helmet from "helmet";
-import mysql2 from "mysql2/promise";
 import session from "express-session";
 import express, { Request, Response } from "express";
 import { createConnection } from "typeorm";
-import * as Session from "express-session";
 import authRoutes from "./routes/auth.routes.js";
-import expressMySqlSession from "express-mysql2-session";
-import { config } from "./config.js";
-
-declare module "express-session" {
-  export interface SessionData {
-    is_logined?: boolean;
-    dispayName?: string;
-    userId?: number;
-  }
-}
-
-const connection = mysql2.createPool(config.db);
-const MySQLStore = expressMySqlSession(Session);
-const sessionStore = new MySQLStore({}, connection);
-const sessionOption = {
-  secret: config.session.secreatKey,
-  resave: false,
-  saveUninitialized: false,
-  store: sessionStore,
-  cookie: {
-    httpOnly: true,
-    secure: false,
-    maxAge: 3600000,
-  },
-};
+import { sessionOption } from "./middleware/session.js";
 
 createConnection()
   .then(() => {
