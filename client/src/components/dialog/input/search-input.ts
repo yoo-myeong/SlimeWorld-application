@@ -1,11 +1,10 @@
-import { BaseComponent, Component } from "./../../component.js";
+import { ClientNetwork } from "../../../network/http.js";
+import { BaseComponent } from "./../../component.js";
+import { InputSection } from "./login-input.js";
 
-export interface SearchContainer extends Component {
-  userId: string;
-  password: string;
-}
-export class SearchSectionInput extends BaseComponent<HTMLElement> implements SearchContainer {
-  constructor() {
+export class SearchSectionInput extends BaseComponent<HTMLElement> implements InputSection {
+  private SubmitListenr?: () => void;
+  constructor(private network: ClientNetwork) {
     super(`<div>
             <h3>검색</h3>
             <div class="form__container">
@@ -15,6 +14,7 @@ export class SearchSectionInput extends BaseComponent<HTMLElement> implements Se
                 옵션 2
             </div>
         </div>`);
+    console.log(this.network); ///////////////////////////////////////////////////////
   }
 
   public get userId(): string {
@@ -24,5 +24,10 @@ export class SearchSectionInput extends BaseComponent<HTMLElement> implements Se
   public get password(): string {
     const element = this.element.querySelector("#password")! as HTMLInputElement;
     return element.value;
+  }
+
+  async setOnSubmitListenr(SubmitListenr: () => void) {
+    this.SubmitListenr = SubmitListenr;
+    console.log(this.SubmitListenr);
   }
 }
