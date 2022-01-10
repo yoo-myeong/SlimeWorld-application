@@ -2,11 +2,19 @@ import "reflect-metadata";
 import "express-async-errors";
 import morgan from "morgan";
 import helmet from "helmet";
+import cors from "cors";
 import session from "express-session";
 import express, { Request, Response } from "express";
 import { createConnection } from "typeorm";
 import authRoutes from "./routes/auth.routes.js";
 import { sessionOption } from "./middleware/session.js";
+import { config } from "./config.js";
+
+const corsOption = {
+  origin: config.cors.allowedOrigin,
+  optionSuccessStatus: 200,
+  credentials: true,
+};
 
 createConnection()
   .then(() => {
@@ -14,6 +22,7 @@ createConnection()
     app.use(express.json());
     app.use(morgan("tiny"));
     app.use(helmet());
+    app.use(cors(corsOption));
     app.use(session(sessionOption));
 
     app.use("/auth", authRoutes);

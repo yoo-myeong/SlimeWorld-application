@@ -23,4 +23,7 @@ export const config = {
   session: {
     secreatKey: required("SESSION_SECREAT_KEY") as string,
   },
+  cors: {
+    allowedOrigin: required("CORS_ALLOW_ORIGIN") as string,
+  },
 };

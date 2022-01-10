@@ -40,6 +40,7 @@ export class authController {
 
   async login(req: Request, res: Response): Promise<Response> {
     const { email, password }: AuthData = req.body;
+    console.log(`${email},${password}`);
     try {
       const user = await this.authService.getUserByEmail(email);
       if (!user) {
@@ -52,6 +53,7 @@ export class authController {
       req.session.is_logined = true;
       req.session.userId = user.id;
       req.session.dispayName = user.username;
+      req.session.position = user.position;
       req.session.save(() => {
         return res.sendStatus(202);
       });
@@ -70,9 +72,10 @@ export class authController {
   async me(req: Request, res: Response) {
     if (req.session.is_logined) {
       const username = req.session.dispayName;
-      res.status(200).json({ username });
+      const position = req.session.position;
+      res.status(200).json({ username, position });
     } else {
-      res.sendStatus(401);
+      res.status(401).json({ message: "invalid session id" });
     }
   }
 }
