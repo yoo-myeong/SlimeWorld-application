@@ -4,20 +4,20 @@ export interface Composable {
   addChild(section: Component, position?: InsertPosition): void;
 }
 export interface PageComposable extends Composable {
-  addItem(child: Component): void;
+  addItem(item: Component): void;
 }
 
-interface SectionContainer extends Component, Composable {
+interface PageItemContainer extends Component, Composable {
   setOnCloseListener(parent: HTMLElement): void;
 }
 
-type SectionContainerConstructor = {
-  new (): SectionContainer;
+type PageItemContainerConstructor = {
+  new (): PageItemContainer;
 };
 
 type OncloseListener = () => void;
 
-export class PageItemComponent extends BaseComponent<HTMLElement> implements SectionContainer {
+export class PageItemComponent extends BaseComponent<HTMLElement> implements PageItemContainer {
   private closeListener?: OncloseListener;
   constructor() {
     super(`<li class="page-item">
@@ -44,7 +44,7 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Sec
 }
 
 export class PageComponent extends BaseComponent<HTMLUListElement> implements PageComposable {
-  constructor(private pageItemConstructor: SectionContainerConstructor) {
+  constructor(private pageItemConstructor: PageItemContainerConstructor) {
     super('<ul class="page"></ul>');
   }
 
@@ -52,10 +52,10 @@ export class PageComponent extends BaseComponent<HTMLUListElement> implements Pa
     section.attachTo(this.element, position);
   }
 
-  addItem(child: Component): void {
-    const item = new this.pageItemConstructor();
-    item.addChild(child);
-    item.attachTo(this.element, "beforeend");
-    item.setOnCloseListener(this.element);
+  addItem(item: Component): void {
+    const pageItem = new this.pageItemConstructor();
+    pageItem.addChild(item);
+    pageItem.attachTo(this.element, "beforeend");
+    pageItem.setOnCloseListener(this.element);
   }
 }

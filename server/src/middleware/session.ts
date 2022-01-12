@@ -8,20 +8,20 @@ declare module "express-session" {
     is_logined?: boolean;
     dispayName?: string;
     userId?: number;
+    position?: "seller" | "buyer";
   }
 }
 
 const connection = mysql2.createPool(config.db);
 const MySQLStore = expressMySqlSession(Session);
 const sessionStore = new MySQLStore({}, connection);
-export const sessionOption = {
+export const sessionOption: Session.SessionOptions = {
   secret: config.session.secreatKey,
   resave: false,
   saveUninitialized: false,
   store: sessionStore,
   cookie: {
     httpOnly: true,
-    secure: false,
     maxAge: 3600000,
   },
 };
