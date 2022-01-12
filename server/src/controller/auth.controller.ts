@@ -22,10 +22,10 @@ export class authController {
   async singup(req: Request, res: Response): Promise<Response> {
     const { email, password, username, position }: AuthData = req.body;
     if (password.length < 6 || password.length > 15) {
-      return res.status(400).json("비밀번호 길이는 6 이상 15 이하");
+      return res.status(400).json({ message: "비밀번호 길이는 6 이상 15 이하" });
     }
     const EmailExitance = await this.checkEmailExitance(email);
-    if (EmailExitance) return res.sendStatus(409);
+    if (EmailExitance) return res.status(409).json({ message: "존재하는 이메일입니다." });
     const hashedPassword = await bcrypt.hash(password, config.bcrypt.saltRounds);
     const hashedSignupData = { email, password: hashedPassword, username, position };
     try {
@@ -34,7 +34,7 @@ export class authController {
     } catch (error) {
       console.error(error);
       req.session.destroy(() => {});
-      return res.status(400).json("잘못된 형식의 데이터 전달");
+      return res.status(400).json({ message: "잘못된 형식의 데이터 전달" });
     }
   }
 
@@ -44,11 +44,11 @@ export class authController {
     try {
       const user = await this.authService.getUserByEmail(email);
       if (!user) {
-        return res.sendStatus(401);
+        return res.status(401).json({ message: "unAuthorized" });
       }
       const compared = await bcrypt.compare(password, user.password);
       if (!compared) {
-        return res.sendStatus(401);
+        return res.status(401).json({ message: "unAuthorized" });
       }
       req.session.is_logined = true;
       req.session.userId = user.id;
