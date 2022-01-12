@@ -4,7 +4,7 @@ import { InputSection } from "../dialog.js";
 export class JoinInputSection extends BaseComponent<HTMLElement> implements InputSection {
   private SubmitListenr?: () => void;
   constructor() {
-    super(`<div class="Login__Container">
+    super(`<div class="Join__Container">
                 <h3>로그인</h3>
                 <div class="form__container">
                     <label for="email">이메일</label>
@@ -35,7 +35,6 @@ export class JoinInputSection extends BaseComponent<HTMLElement> implements Inpu
     submitButton.onclick = async () => {
       this.SubmitListenr && this.SubmitListenr();
     };
-    console.log(this.SubmitListenr);
   }
 
   get email(): string {

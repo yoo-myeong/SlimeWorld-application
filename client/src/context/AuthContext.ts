@@ -5,25 +5,29 @@ import { DialogConstructor } from "../components/dialog/dialog.js";
 import { LoginInputSection } from "../components/dialog/section/login-input.js";
 import { JoinInputSection } from "../components/dialog/section/signup-input.js";
 
-export class AuthProvider {
+export interface Authorize {
+  authService: AuthService;
+}
+
+export class AuthProvider implements Authorize {
   private loginBtn = document.querySelector("#login__button")! as HTMLButtonElement;
   private logoutBtn = document.querySelector("#logout__button")! as HTMLButtonElement;
-  private authService: AuthService;
+  public authService: AuthService;
   private dialog?: Dialog;
-  constructor(service: AuthServiceConstructor, dialogConstructor: DialogConstructor) {
-    this.authService = new service(HttpClient);
-    this.SetOnClickEventListener(this.loginBtn, this.GetLoginClickListener(dialogConstructor));
-    this.SetOnClickEventListener(this.logoutBtn, this.GetLogoutClickListener());
+  constructor(serviceConstructor: AuthServiceConstructor, dialogConstructor: DialogConstructor) {
+    this.authService = new serviceConstructor(HttpClient);
+    this.setOnClickEventListener(this.loginBtn, this.getLoginClickListener(dialogConstructor));
+    this.setOnClickEventListener(this.logoutBtn, this.getLogoutClickListener());
     this.authRequest(this.authService).then((btnName) => {
       this.exposeAuthButton(btnName);
     });
   }
 
-  SetOnClickEventListener(button: HTMLButtonElement, listener: () => void) {
+  setOnClickEventListener(button: HTMLButtonElement, listener: () => void) {
     button.onclick = listener;
   }
 
-  GetLoginClickListener(dialogConstructor: DialogConstructor) {
+  getLoginClickListener(dialogConstructor: DialogConstructor) {
     return () => {
       this.dialog = new dialogConstructor();
       const loginInputSection = this.getLoginInputSection();
@@ -35,7 +39,7 @@ export class AuthProvider {
   getLoginInputSection() {
     const loginInputSection = new LoginInputSection();
     loginInputSection.setOnSubmitListenr(this.getLoginInputSubmitListenr(loginInputSection));
-    loginInputSection.setOnJoinListener(this.getJoinListener(loginInputSection));
+    loginInputSection.setOnJoinListener(this.getJoinClickListener(loginInputSection));
     return loginInputSection;
   }
 
@@ -44,7 +48,9 @@ export class AuthProvider {
       const data = loginInputSection.getAllInputData();
       try {
         await this.authService.login(data);
-        location.reload();
+        this.dialog?.removeFrom(document.body);
+        this.exposeAuthButton("logoutBtn");
+        this.hideAuthButton("loginBtn");
       } catch (error) {
         console.error(error);
         alert("아이디 또는 비밀번호가 올바르지 않습니다.");
@@ -54,7 +60,7 @@ export class AuthProvider {
     };
   }
 
-  getJoinListener(loginInputSection: LoginInputSection) {
+  getJoinClickListener(loginInputSection: LoginInputSection) {
     return () => {
       this.dialog && this.dialog.removeChild(loginInputSection);
       this.dialog && this.dialog.addChild(this.getJoinInputSection());
@@ -81,7 +87,7 @@ export class AuthProvider {
     };
   }
 
-  GetLogoutClickListener() {
+  getLogoutClickListener() {
     return () => {
       this.authService.logout();
       location.reload();
@@ -102,5 +108,9 @@ export class AuthProvider {
 
   exposeAuthButton(buttonName: "loginBtn" | "logoutBtn") {
     this[buttonName].classList.remove("hidden");
+  }
+
+  hideAuthButton(buttonName: "loginBtn" | "logoutBtn") {
+    this[buttonName].classList.add("hidden");
   }
 }

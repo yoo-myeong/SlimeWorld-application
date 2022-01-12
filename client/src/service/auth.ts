@@ -6,12 +6,12 @@ type LoginFormat = {
   password: string;
 };
 
-type MeResponseData = {
+type MeFormat = {
   username: string;
   position: "seller" | "buyer";
 };
 
-type SingupFormat = MeResponseData & LoginFormat;
+type SingupFormat = MeFormat & LoginFormat;
 
 export interface AuthService {
   singup(data: SingupFormat): Promise<any>;
@@ -24,7 +24,7 @@ export type AuthServiceConstructor = {
   new (constructor: NetworkConstructor): AuthService;
 };
 
-export class AuthNetwork implements AuthService {
+export class AuthFetchService implements AuthService {
   private network: ClientNetwork;
   constructor(constructor: NetworkConstructor) {
     this.network = new constructor(baseURL);
@@ -50,7 +50,7 @@ export class AuthNetwork implements AuthService {
     });
   }
 
-  async me(): Promise<MeResponseData> {
+  async me(): Promise<MeFormat> {
     return this.network.request("/auth/me", {
       method: "GET",
     });
