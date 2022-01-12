@@ -1,6 +1,6 @@
 import { ClientNetwork } from "../../../network/http.js";
-import { BaseComponent } from "./../../component.js";
-import { InputSection } from "./login-input.js";
+import { BaseComponent } from "../../component.js";
+import { InputSection } from "../dialog.js";
 
 export class SearchSectionInput extends BaseComponent<HTMLElement> implements InputSection {
   private SubmitListenr?: () => void;

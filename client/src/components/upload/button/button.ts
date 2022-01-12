@@ -1,14 +1,15 @@
 import { BaseComponent, Component } from "../../component.js";
 
+type OnEventListener = () => void;
+
 export interface buttonContainer extends Component {
-  setOnClickListener(listener: OnClickListener): void;
+  setOnClickListener(listener: OnEventListener): void;
 }
-type OnClickListener = () => void;
 
 export class ButtonComponent extends BaseComponent<HTMLElement> implements buttonContainer {
-  private clickListener?: OnClickListener;
+  private clickListener?: OnEventListener;
   constructor(private buttonId: string, private buttonName: string) {
-    super(`<div class="container">
+    super(`<div class="button_container">
             <button class="button">test</button>
           </div>`);
     const button = this.element.querySelector(".button")! as HTMLButtonElement;
@@ -19,7 +20,7 @@ export class ButtonComponent extends BaseComponent<HTMLElement> implements butto
     };
   }
 
-  setOnClickListener(listener: OnClickListener): void {
+  setOnClickListener(listener: OnEventListener): void {
     this.clickListener = listener;
   }
 }

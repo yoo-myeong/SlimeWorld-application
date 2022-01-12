@@ -2,7 +2,11 @@ export interface ClientNetwork {
   request(url: string, options?: any): Promise<any>;
 }
 
-export default class HttpClient implements ClientNetwork {
+export type NetworkConstructor = {
+  new (url: string): ClientNetwork;
+};
+
+export class HttpClient implements ClientNetwork {
   constructor(private baseURL: string) {}
 
   async request(url: string, options?: any) {

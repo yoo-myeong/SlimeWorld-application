@@ -1,20 +1,33 @@
-import { ClientNetwork } from "../network/http";
+import { baseURL } from "../app.js";
+import { ClientNetwork, NetworkConstructor } from "../network/http.js";
 
 type LoginFormat = {
   email: string;
   password: string;
 };
 
-export type MeResponseData = {
+type MeResponseData = {
   username: string;
   position: "seller" | "buyer";
 };
 
 type SingupFormat = MeResponseData & LoginFormat;
 
-export default class AuthService {
-  constructor(private network: ClientNetwork) {
-    this.network = network;
+export interface AuthService {
+  singup(data: SingupFormat): Promise<any>;
+  login(data: LoginFormat): Promise<any>;
+  logout(): Promise<any>;
+  me(): Promise<any>;
+}
+
+export type AuthServiceConstructor = {
+  new (constructor: NetworkConstructor): AuthService;
+};
+
+export class AuthNetwork implements AuthService {
+  private network: ClientNetwork;
+  constructor(constructor: NetworkConstructor) {
+    this.network = new constructor(baseURL);
   }
 
   async singup(data: SingupFormat) {
