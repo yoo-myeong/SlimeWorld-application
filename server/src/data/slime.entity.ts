@@ -65,7 +65,7 @@ export class SlimeOption extends BasicEntity implements postOptionEntity {
   @Column()
   option: string;
 
-  @ManyToOne(() => SlimePost, (slime_post) => slime_post.slime_options, { cascade: true, nullable: false })
+  @ManyToOne(() => SlimePost, (slime_post) => slime_post.slime_options, { onDelete: "CASCADE", nullable: false })
   @JoinColumn({ name: "slimePostId" })
   slime_post: SlimePost;
 

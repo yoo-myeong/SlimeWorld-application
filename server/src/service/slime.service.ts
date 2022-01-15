@@ -1,4 +1,4 @@
-import { getRepository, Repository } from "typeorm";
+import { DeleteResult, getRepository, Repository } from "typeorm";
 import { postEntity, postEntityConstructor, postOptionEntity, postOptionEntityConstructor } from "../data/slime.entity";
 
 export type postData = {
@@ -7,11 +7,13 @@ export type postData = {
   mediaURL: string;
   description: string;
   saleSite: string;
-  options: Array<string>;
+  options?: Array<string>;
 };
 
 export interface postService {
-  createSlimePost(data: Partial<postData>, userId: number): Promise<postEntity>;
+  getPost(): Promise<postEntity[]>;
+  createPost(data: Partial<postData>, userId: number): Promise<postEntity>;
+  deletePost(id: string): Promise<DeleteResult>;
 }
 
 export type postServiceConstructor = {
@@ -26,8 +28,12 @@ export class SlimeService implements postService {
     this.slimeOptionRepository = getRepository(optionRepositroy);
   }
 
-  async createSlimePost(data: postData, userId: number): Promise<postEntity> {
-    const options: Array<string> = data.options;
+  async getPost(): Promise<postEntity[]> {
+    return this.slimeRepository.find();
+  }
+
+  async createPost(data: postData, userId: number): Promise<postEntity> {
+    const options = data.options;
     delete data.options;
 
     const postModel = new this.postRepository();
@@ -38,13 +44,19 @@ export class SlimeService implements postService {
     });
     const post = await this.slimeRepository.save(postModel);
 
-    options.forEach((option) => {
-      const optionModel = new this.optionRepositroy();
-      optionModel.option = option;
-      optionModel.slimePostId = postModel.id;
-      this.slimeOptionRepository.save(optionModel);
-    });
+    if (options) {
+      options.forEach((option) => {
+        const optionModel = new this.optionRepositroy();
+        optionModel.option = option;
+        optionModel.slimePostId = postModel.id;
+        this.slimeOptionRepository.save(optionModel);
+      });
+    }
 
     return post;
+  }
+
+  async deletePost(id: string): Promise<DeleteResult> {
+    return this.slimeRepository.createQueryBuilder().delete().where("id=:id", { id }).execute();
   }
 }
