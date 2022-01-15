@@ -1,22 +1,24 @@
 import express from "express";
-import "express-async-errors";
-import { authController } from "../controller/auth.controller.js";
-import { User } from "../data/auth.entity.js";
-import { authService } from "../service/auth.service.js";
+import { authController, UserController } from "../controller/auth.controller.js";
+import { UserService } from "../service/auth.service.js";
 
 export const router = express.Router();
 
 router.post("/signup", (req, res) => {
-  new authController(User, authService).singup(req, res);
+  const userController: authController = new UserController(UserService);
+  userController.singup(req, res);
 });
 router.post("/login", (req, res) => {
-  new authController(User, authService).login(req, res);
+  const userController: authController = new UserController(UserService);
+  userController.login(req, res);
 });
 router.post("/logout", (req, res) => {
-  new authController(User, authService).logout(req, res);
+  const userController: authController = new UserController(UserService);
+  userController.logout(req, res);
 });
 router.get("/me", (req, res) => {
-  new authController(User, authService).me(req, res);
+  const userController: authController = new UserController(UserService);
+  userController.me(req, res);
 });
 
 export default router;

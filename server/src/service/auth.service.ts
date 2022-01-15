@@ -1,7 +1,7 @@
-import { getRepository } from "typeorm";
-import { authEntity } from "../data/auth.entity";
+import { getRepository, Repository } from "typeorm";
+import { authEntity, authEntityConstructor } from "../data/auth.entity.js";
 
-export type AuthData = {
+export type userData = {
   id?: number;
   email?: string;
   username?: string;
@@ -9,34 +9,36 @@ export type AuthData = {
   position?: "seller" | "buyer";
 };
 
-export interface authEntityService {
+export interface authService {
   getUser(userId: number): Promise<authEntity>;
   getUserByEmail(email: string): Promise<authEntity>;
-  createUser(data: AuthData): Promise<authEntity>;
+  createUser(data: userData): Promise<authEntity>;
 }
 
-export type authEntityConstructor = { new (): authEntity };
+export type authServiceConstructor = {
+  new (Entity: authEntityConstructor): authService;
+};
 
-export class authService implements authEntityService {
-  constructor(private UserRepository: authEntityConstructor) {}
+export class UserService implements authService {
+  private userRepository: Repository<authEntity>;
+  constructor(private repository: authEntityConstructor) {
+    this.userRepository = getRepository(repository);
+  }
 
   async getUser(userId: number): Promise<authEntity> {
-    const repository = getRepository(this.UserRepository);
-    return repository.findOne({ where: { userId } });
+    return this.userRepository.findOne({ where: { userId } });
   }
 
   async getUserByEmail(email: string): Promise<authEntity> {
-    const repository = getRepository(this.UserRepository);
-    return repository.findOne({ email });
+    return this.userRepository.findOne({ email });
   }
 
-  async createUser(data: AuthData): Promise<authEntity> {
-    const repository = getRepository(this.UserRepository);
-    const model = new this.UserRepository();
+  async createUser(data: userData): Promise<authEntity> {
+    const model = new this.repository();
     const keys = Object.keys(data);
     keys.forEach((key) => {
       model[key] = data[key];
     });
-    return repository.save(model);
+    return this.userRepository.save(model);
   }
 }

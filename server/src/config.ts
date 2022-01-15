@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-function required<T>(key: string, defaultValue?: any): T {
-  const value: T = process.env[key] || defaultValue;
+function required(key: string, defaultValue?: any): string {
+  const value: string = process.env[key] || defaultValue;
   if (value == null) {
     throw new Error("key is undefined");
   }
@@ -25,5 +25,11 @@ export const config = {
   },
   cors: {
     allowedOrigin: required("CORS_ALLOW_ORIGIN") as string,
+  },
+  aws: {
+    s3: {
+      accessKeyId: required("S3_ACCESS_KEY_ID") as string,
+      secretAccessKey: required("S3_SECRET_ACCESS_KEY") as string,
+    },
   },
 };
