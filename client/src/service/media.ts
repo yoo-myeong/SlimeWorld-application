@@ -12,7 +12,7 @@ export type imageUploadFormat = {
 
 export interface postService {
   get(writer?: string): Promise<any>;
-  imagePost(data: any): Promise<any>;
+  post(data: any, postType: "json" | "file"): Promise<any>;
 }
 
 export type postServiceConstructor = {
@@ -32,15 +32,27 @@ export class mediaFetchService implements postService {
     });
   }
 
-  async imagePost(data: any): Promise<any> {
-    const body = new FormData();
-    for (const key in data) {
-      body.append(key, data[key]);
+  async post(data: any, postType: "json" | "file"): Promise<any> {
+    if (postType === "file") {
+      const body = new FormData();
+      for (const key in data) {
+        if (data[key] instanceof Array) {
+          data[key].forEach((value: string) => {
+            body.append(key, value);
+          });
+        } else {
+          body.append(key, data[key]);
+        }
+      }
+      return this.network.requestWithFile(`/slime/${data.media}`, {
+        method: "POST",
+        body,
+      });
+    } else if (postType === "json") {
+      return this.network.requestWithJson(`/slime/${data.media}`, {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
     }
-    body.append("media", "image");
-    return this.network.requestWithFile("/slime/image", {
-      method: "POST",
-      body,
-    });
   }
 }

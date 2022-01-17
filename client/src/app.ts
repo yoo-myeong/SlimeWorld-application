@@ -16,12 +16,12 @@ export class App {
   constructor(appRoot: HTMLElement) {
     this.page = new PageComponent(PageItemComponent);
     this.page.attachTo(appRoot);
-    AuthProvider.build(AuthFetchService, InputDialog).then((auth) => {
-      console.log(App.username);
-      console.log(auth);
+    AuthProvider.build(AuthFetchService, InputDialog).then(() => {
+      if (App.position === "seller") {
+        const post = new UploadComponent(InputDialog, ButtonComponent, mediaFetchService);
+        this.page.addChild(post);
+      }
     });
-    const post = new UploadComponent(ButtonComponent, InputDialog, mediaFetchService);
-    this.page.addChild(post);
   }
 
   static reloadPage() {
