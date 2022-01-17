@@ -3,6 +3,7 @@ import { BaseComponent, Component } from "./../component.js";
 
 export interface InputSection extends Component {
   setOnSubmitListenr(SubmitListenr: () => void): void;
+  getAllInputData(): any;
 }
 
 export type InputSectionConstructor = {

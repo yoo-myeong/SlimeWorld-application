@@ -4,32 +4,39 @@ import { AuthService, AuthServiceConstructor } from "../service/auth.js";
 import { DialogConstructor } from "../components/dialog/dialog.js";
 import { LoginInputSection } from "../components/dialog/section/login-input.js";
 import { JoinInputSection } from "../components/dialog/section/signup-input.js";
+import { App } from "../app.js";
 
 export interface Authorize {
   authService: AuthService;
 }
 
 export class AuthProvider implements Authorize {
+  public authService: AuthService;
   private loginBtn = document.querySelector("#login__button")! as HTMLButtonElement;
   private logoutBtn = document.querySelector("#logout__button")! as HTMLButtonElement;
-  public authService: AuthService;
   private dialog?: Dialog;
-  constructor(serviceConstructor: AuthServiceConstructor, dialogConstructor: DialogConstructor) {
+  constructor(serviceConstructor: AuthServiceConstructor, private dialogConstructor: DialogConstructor) {
     this.authService = new serviceConstructor(HttpClient);
-    this.setOnClickEventListener(this.loginBtn, this.getLoginClickListener(dialogConstructor));
-    this.setOnClickEventListener(this.logoutBtn, this.getLogoutClickListener());
-    this.authRequest(this.authService).then((btnName) => {
-      this.exposeAuthButton(btnName);
-    });
   }
 
-  setOnClickEventListener(button: HTMLButtonElement, listener: () => void) {
-    button.onclick = listener;
+  static async build(
+    serviceConstructor: AuthServiceConstructor,
+    dialogConstructor: DialogConstructor
+  ): Promise<Authorize> {
+    const auth = new AuthProvider(serviceConstructor, dialogConstructor);
+    auth.setOnAuthButtonClickListener();
+    await auth.getUser();
+    return auth;
   }
 
-  getLoginClickListener(dialogConstructor: DialogConstructor) {
+  setOnAuthButtonClickListener() {
+    this.loginBtn.onclick = this.getLoginClickListener();
+    this.logoutBtn.onclick = this.getLogoutClickListener();
+  }
+
+  getLoginClickListener() {
     return () => {
-      this.dialog = new dialogConstructor();
+      this.dialog = new this.dialogConstructor();
       const loginInputSection = this.getLoginInputSection();
       this.dialog.addChild(loginInputSection);
       this.dialog.attachTo(document.body);
@@ -47,10 +54,13 @@ export class AuthProvider implements Authorize {
     return async () => {
       const data = loginInputSection.getAllInputData();
       try {
-        await this.authService.login(data);
+        const user = await this.authService.login(data);
         this.dialog?.removeFrom(document.body);
         this.exposeAuthButton("logoutBtn");
         this.hideAuthButton("loginBtn");
+        App.username = user.username;
+        App.position = user.position;
+        App.reloadPage();
       } catch (error) {
         console.error(error);
         alert("아이디 또는 비밀번호가 올바르지 않습니다.");
@@ -90,23 +100,27 @@ export class AuthProvider implements Authorize {
   getLogoutClickListener() {
     return () => {
       this.authService.logout();
-      location.reload();
+      App.username = undefined;
+      App.position = undefined;
+      App.reloadPage();
     };
   }
 
-  async authRequest(authService: AuthService): Promise<"loginBtn" | "logoutBtn"> {
-    let buttonName: "loginBtn" | "logoutBtn";
+  async getUser(): Promise<void> {
     try {
-      await authService.me();
-      buttonName = "logoutBtn";
-    } catch (err) {
-      console.log(err);
-      buttonName = "loginBtn";
+      const user = await this.authService.me();
+      App.username = user.username;
+      App.position = user.position;
+      this.exposeAuthButton("logoutBtn");
+      this.hideAuthButton("loginBtn");
+    } catch (error) {
+      this.exposeAuthButton("loginBtn");
+      this.hideAuthButton("logoutBtn");
+      throw error;
     }
-    return buttonName;
   }
 
-  exposeAuthButton(buttonName: "loginBtn" | "logoutBtn") {
+  exposeAuthButton(buttonName: "loginBtn" | "logoutBtn"): void {
     this[buttonName].classList.remove("hidden");
   }
 
