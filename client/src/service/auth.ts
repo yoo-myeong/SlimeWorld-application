@@ -1,5 +1,5 @@
 import { baseURL } from "../app.js";
-import { ClientNetwork, NetworkConstructor } from "../network/http.js";
+import { ClientNetwork, NetworkConstructor } from "../connection/http.js";
 
 type LoginFormat = {
   email: string;

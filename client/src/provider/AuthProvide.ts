@@ -1,5 +1,5 @@
-import { Dialog } from "./../components/dialog/dialog.js";
-import { HttpClient } from "./../network/http.js";
+import { Dialog } from "../components/dialog/dialog.js";
+import { HttpClient } from "../connection/http.js";
 import { AuthService, AuthServiceConstructor } from "../service/auth.js";
 import { DialogConstructor } from "../components/dialog/dialog.js";
 import { LoginInputSection } from "../components/dialog/section/login-input.js";

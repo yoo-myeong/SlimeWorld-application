@@ -1,5 +1,5 @@
-import { NetworkConstructor } from "./../network/http.js";
-import { ClientNetwork } from "../network/http.js";
+import { NetworkConstructor } from "../connection/http.js";
+import { ClientNetwork } from "../connection/http.js";
 import { baseURL } from "../app.js";
 
 export type imageUploadFormat = {
@@ -10,29 +10,29 @@ export type imageUploadFormat = {
   options: string[];
 };
 
-export interface postService {
-  get(writer?: string): Promise<any>;
-  post(data: any, postType: "json" | "file"): Promise<any>;
+export interface mediaService {
+  getMedia(writer?: string): Promise<any>;
+  postMedia(data: any, postType: "json" | "file"): Promise<any>;
 }
 
-export type postServiceConstructor = {
-  new (network: NetworkConstructor): postService;
+export type mediaServiceConstructor = {
+  new (network: NetworkConstructor): mediaService;
 };
 
-export class mediaFetchService implements postService {
+export class mediaFetchService implements mediaService {
   private network: ClientNetwork;
   constructor(network: NetworkConstructor) {
     this.network = new network(baseURL);
   }
 
-  async get(writer?: string): Promise<any> {
+  async getMedia(writer?: string): Promise<any> {
     const url = writer ? `/slime/${writer}` : `/slime`;
     return this.network.requestWithJson(url, {
       method: "GET",
     });
   }
 
-  async post(data: any, postType: "json" | "file"): Promise<any> {
+  async postMedia(data: any, postType: "json" | "file"): Promise<any> {
     if (postType === "file") {
       const body = new FormData();
       for (const key in data) {
