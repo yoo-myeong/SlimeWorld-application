@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { SlimeOption, SlimePost } from "./../data/slime.entity";
-import { postData, postService, postServiceConstructor } from "./../Service/slime.service";
+import { SlimeOption, SlimePost } from "./../data/slime.entity.js";
+import { postData, postService, postServiceConstructor } from "./../Service/slime.service.js";
 
 export interface postController {
   getPost(req: Request, res: Response): Promise<Response>;

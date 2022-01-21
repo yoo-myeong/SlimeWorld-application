@@ -1,5 +1,10 @@
 import { DeleteResult, getRepository, Repository } from "typeorm";
-import { postEntity, postEntityConstructor, postOptionEntity, postOptionEntityConstructor } from "../data/slime.entity";
+import {
+  postEntity,
+  postEntityConstructor,
+  postOptionEntity,
+  postOptionEntityConstructor,
+} from "../data/slime.entity.js";
 
 export type postData = {
   title: string;

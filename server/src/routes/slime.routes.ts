@@ -4,7 +4,7 @@ import AWS from "aws-sdk";
 import multerS3 from "multer-s3";
 import path from "path";
 import { postController, SlimeController } from "../controller/slime.controller.js";
-import { SlimeService } from "../Service/slime.service.js";
+import { SlimeService } from "../service/slime.service.js";
 import { config } from "../config.js";
 
 export const router = express.Router();
