@@ -13,25 +13,25 @@ export class VideoComponent extends BaseComponent<HTMLElement> {
     super(
       `<section class="video">
           <div class="video__player">
-            <h3 class="video__title"></h3>
+            <h3 class="video__title">제목: </h3>
             <iframe class="video__iframe"></iframe>
-            <p class="video__description">설명: </p>
-            <a class="video__saleSite" target="_blank">판매처: </a>
+            <p class="video__description">글: </p>
+            <a class="video__saleSite" target="_blank"></a>
           </div>
         </section>`
     );
     const titleElement = this.element.querySelector(".video__title")! as HTMLHeadingElement;
-    titleElement.textContent = data.title;
+    titleElement.textContent += data.title;
 
     const iframe = this.element.querySelector(".video__iframe")! as HTMLIFrameElement;
     iframe.src = this.convertToEmbeddedURL(data.mediaURL);
 
     const description = this.element.querySelector(".video__description")! as HTMLParamElement;
-    description.textContent = data.description;
+    description.textContent += data.description;
 
     const saleSite = this.element.querySelector(".video__saleSite")! as HTMLAnchorElement;
     saleSite.href = data.saleSite;
-    saleSite.textContent = data.saleSite;
+    saleSite.textContent = "새 탭에서 판매처 열기";
   }
 
   private convertToEmbeddedURL(url: string): string {

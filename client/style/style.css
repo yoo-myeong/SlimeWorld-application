@@ -58,6 +58,12 @@ button {
   outline: 0;
 }
 
+.button {
+  margin: 0.2em;
+  background-color: #7935b1;
+  color: #d4dfe6;
+}
+
 input,
 textarea {
   background-color: var(--text-edit-bg-color);
@@ -149,6 +155,12 @@ body {
   text-align: center;
 }
 
+.post__container {
+  padding-top: 0.2em;
+  padding-right: 0.2em;
+  text-align: right;
+}
+
 /* -- Dialog -- */
 .dialog {
   display: flex;
@@ -213,11 +225,13 @@ body {
   box-shadow: 2px 2px 6px var(--shadow-color);
   background: var(--bg-accent-color);
   background: var(--component-bg-gradient);
+  height: auto;
 }
 
 .page-item__controls {
   text-align: right;
   padding-right: 0.5em;
+  height: auto;
 }
 
 .page-item__title {
@@ -226,6 +240,7 @@ body {
 
 .page-item__body {
   width: 100%;
+  height: auto;
 }
 
 /* -- Image & Video -- */
@@ -233,7 +248,7 @@ body {
 .image {
   display: flex;
   width: 100%;
-  height: 250px;
+  height: auto;
 }
 
 .video__player,
@@ -254,7 +269,15 @@ body {
 }
 
 .image__thumbnail {
+  display: block;
   width: 100%;
+}
+
+.image__container {
+  display: inline-block;
+  width: 20em;
+  height: 12em;
+  text-align: center;
 }
 
 /* -- Note -- */

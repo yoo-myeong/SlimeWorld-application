@@ -14,9 +14,11 @@ export class ImageComponent extends BaseComponent<HTMLElement> {
     <section class="imgae">
       <div class="image__holder">
         <h3 class="image__title">제목: </h3>
-        <img class="image__thumbnail" />
-        <p class="image__description">설명: </p>
-        <a class="image__saleSite">판매처: </a>
+        <div class="image__container">
+          <img class="image__thumbnail" />
+          <p class="image__description">글: </p>
+          <a class="image__saleSite"></a>
+        </div>
       </div>
     </section>
     `);
@@ -24,8 +26,6 @@ export class ImageComponent extends BaseComponent<HTMLElement> {
     const imageElement = this.element.querySelector(".image__thumbnail")! as HTMLImageElement;
     imageElement.src = data.mediaURL;
     imageElement.alt = data.title;
-    imageElement.style.width = "300px";
-    imageElement.style.height = "200px";
 
     const titleElement = this.element.querySelector(".image__title")! as HTMLParagraphElement;
     titleElement.textContent += data.title;
@@ -35,6 +35,6 @@ export class ImageComponent extends BaseComponent<HTMLElement> {
 
     const saleSite = this.element.querySelector(".image__saleSite")! as HTMLAnchorElement;
     saleSite.href = data.saleSite;
-    saleSite.textContent += data.saleSite;
+    saleSite.textContent += "새 탭에서 판매처 열기";
   }
 }
