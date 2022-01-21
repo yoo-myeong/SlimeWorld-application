@@ -61,7 +61,7 @@ export class UserController implements authController {
       req.session.dispayName = user.username;
       req.session.position = user.position;
       req.session.save(() => {
-        return res.sendStatus(202);
+        return res.status(202).json({ username: user.username, position: user.position });
       });
     } catch (error) {
       console.error(error);

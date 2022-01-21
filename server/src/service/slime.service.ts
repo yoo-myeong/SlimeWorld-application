@@ -4,16 +4,16 @@ import { postEntity, postEntityConstructor, postOptionEntity, postOptionEntityCo
 export type postData = {
   title: string;
   media: "video" | "image";
-  mediaURL: string;
   description: string;
   saleSite: string;
   options?: Array<string>;
+  mediaURL: string;
 };
 
 export interface postService {
   getPost(): Promise<postEntity[]>;
   createPost(data: Partial<postData>, userId: number): Promise<postEntity>;
-  deletePost(id: string): Promise<DeleteResult>;
+  deletePost(postId: string, userId: number): Promise<DeleteResult>;
 }
 
 export type postServiceConstructor = {
@@ -56,7 +56,11 @@ export class SlimeService implements postService {
     return post;
   }
 
-  async deletePost(id: string): Promise<DeleteResult> {
-    return this.slimeRepository.createQueryBuilder().delete().where("id=:id", { id }).execute();
+  async deletePost(postId: string, userId: number): Promise<DeleteResult> {
+    return this.slimeRepository
+      .createQueryBuilder()
+      .delete()
+      .where("id=:id, userId=:userId", { id: postId, userId })
+      .execute();
   }
 }

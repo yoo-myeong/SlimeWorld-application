@@ -30,7 +30,7 @@ router.get("/", (req, res) => {
   slimeController.getPost(req, res);
 });
 
-router.post("/image", upload.single("img"), (req, res) => {
+router.post("/image", upload.single("image"), (req, res) => {
   req.body.mediaURL = req.file["location"];
   const slimeController: postController = new SlimeController(SlimeService);
   slimeController.createPost(req, res);

@@ -36,7 +36,7 @@ export class SlimePost extends BasicEntity implements postEntity {
   @Column("text")
   description: string;
 
-  @Column()
+  @Column("text")
   saleSite: string;
 
   @ManyToOne(() => User, (user) => user.slime_posts)
