@@ -17,7 +17,10 @@ const corsOption = {
   credentials: true,
 };
 
-createConnection()
+const typeorm: any = config.typeorm;
+createConnection({
+  ...typeorm,
+})
   .then(() => {
     const app = express();
     app.use(express.json());
