@@ -1,5 +1,5 @@
 import { baseURL } from "../app.js";
-import { ClientNetwork, NetworkConstructor } from "../network/http.js";
+import { ClientNetwork, NetworkConstructor } from "../connection/http.js";
 
 type LoginFormat = {
   email: string;
@@ -21,37 +21,37 @@ export interface AuthService {
 }
 
 export type AuthServiceConstructor = {
-  new (constructor: NetworkConstructor): AuthService;
+  new (network: NetworkConstructor): AuthService;
 };
 
 export class AuthFetchService implements AuthService {
   private network: ClientNetwork;
-  constructor(constructor: NetworkConstructor) {
-    this.network = new constructor(baseURL);
+  constructor(network: NetworkConstructor) {
+    this.network = new network(baseURL);
   }
 
   async singup(data: SingupFormat) {
-    return this.network.request("/auth/signup", {
+    return this.network.requestWithJson("/auth/signup", {
       method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async login(data: LoginFormat) {
-    return this.network.request("/auth/login", {
+    return this.network.requestWithJson("/auth/login", {
       method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   async logout() {
-    return this.network.request("/auth/logout", {
+    return this.network.requestWithJson("/auth/logout", {
       method: "POST",
     });
   }
 
   async me(): Promise<MeFormat> {
-    return this.network.request("/auth/me", {
+    return this.network.requestWithJson("/auth/me", {
       method: "GET",
     });
   }

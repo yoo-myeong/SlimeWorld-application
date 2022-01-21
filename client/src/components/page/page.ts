@@ -22,8 +22,7 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Pag
   constructor() {
     super(`<li class="page-item">
             <div class="page-item__controls">
-              <button class="close">&times;</button>
-              <button class="like">좋아요버튼</button>
+              <button class="close">삭제&times;</button>
             </div>
             <section class="page-item__body"></section>
           </li>`);

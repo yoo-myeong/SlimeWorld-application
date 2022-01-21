@@ -1,10 +1,11 @@
 export interface Component {
+  element: HTMLElement;
   attachTo(parent: HTMLElement, postion?: InsertPosition): void;
   removeFrom(parent: HTMLElement): void;
 }
 
 export class BaseComponent<T extends HTMLElement> implements Component {
-  protected readonly element: T;
+  readonly element: T;
   constructor(htmlString: string) {
     const template = document.createElement("template");
     template.innerHTML = htmlString;

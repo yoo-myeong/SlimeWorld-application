@@ -40,12 +40,13 @@ export class SlimeController implements postController {
 
   async deletePost(req: Request, res: Response): Promise<Response> {
     const postId = req.params.id;
+    const userId = req.session.userId;
     try {
-      await this.slimeService.deletePost(postId);
+      await this.slimeService.deletePost(postId, userId);
       return res.sendStatus(204);
     } catch (error) {
       console.error(error);
-      return res.sendStatus(401);
+      return res.sendStatus(403);
     }
   }
 }

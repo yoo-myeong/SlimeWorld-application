@@ -1,3 +1,24 @@
+@font-face {
+  font-family: "ONE-Mobile-POP";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/ONE-Mobile-POP.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Y_Spotlight";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts-20-12@1.0/Y_Spotlight.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "InfinitySans-RegularA1";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/InfinitySans-RegularA1.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --bg-main-color: #00000080;
   --bg-accent-color: #2d2d2d;
@@ -13,13 +34,35 @@
   --translucent-black: #00000099;
 }
 
-h3 {
-  margin: 0;
-}
-
 li {
   list-style: none;
   padding-left: 0;
+}
+
+p {
+  color: var(--smokywhite);
+  margin: 0%;
+}
+
+label {
+  color: var(--text-accent-color);
+}
+
+dialog {
+  border: 0;
+}
+
+button {
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
+input,
+textarea {
+  background-color: var(--text-edit-bg-color);
+  color: var(--smokywhite);
+  font-size: 1.5em;
 }
 
 * {
@@ -28,7 +71,7 @@ li {
 }
 
 body {
-  font-family: Roboto, Oxygen, sans-serif;
+  font-family: "InfinitySans-RegularA1";
   display: flex;
   justify-content: center;
   height: 100vh;
@@ -39,7 +82,7 @@ body {
 
 .app {
   width: 100%;
-  max-width: 500px;
+  max-width: 600px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -52,8 +95,10 @@ body {
 }
 
 .banner__title {
+  font-family: "ONE-Mobile-POP";
+  font-size: 1.5em;
   margin: 20px;
-  color: var(--accent-color);
+  color: var(--text-accent-color);
 }
 
 .control-panel {
@@ -62,7 +107,8 @@ body {
   justify-content: center;
 }
 
-.create-button {
+.create-button,
+.dialog__submit {
   margin: 0.1em 0.2em;
   text-align: center;
   user-select: none;
@@ -75,7 +121,6 @@ body {
   border-color: var(--accent-color);
   border-radius: 2px;
 }
-
 .document {
   height: 100%;
   overflow-y: auto;
@@ -98,11 +143,13 @@ body {
 }
 
 .footer {
+  font-size: 1rem;
   background: var(--bg-main-color);
   border-top: 1px solid var(--border-color);
   text-align: center;
 }
 
+/* -- Dialog -- */
 .dialog {
   display: flex;
   align-items: center;
@@ -121,7 +168,7 @@ body {
   display: flex;
   flex-direction: column;
   padding: 0.4em;
-  width: 25em;
+  width: 23em;
   background: var(--bg-accent-color);
   background: var(--component-bg-gradient);
   border: 1px solid var(--border-color);
@@ -129,6 +176,144 @@ body {
   box-shadow: 2px 2px 20px var(--shadow-color);
 }
 
+.form__container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1em;
+}
+
+.close {
+  align-self: flex-end;
+  padding: 0.2rem;
+  color: var(--accent-color);
+  font-size: 18px;
+  font-weight: bold;
+  margin: 3px;
+  transition: color 250ms ease;
+}
+
+.close:hover,
+.close:focus {
+  transform: scale(1.5);
+  color: var(--shadow-color);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.dialog__submit {
+  align-self: flex-end;
+  padding: 0.5em 1.5em;
+}
+
+/* -- PAGE ITEM -- */
+.page-item {
+  margin: 1.5em;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 2px 2px 6px var(--shadow-color);
+  background: var(--bg-accent-color);
+  background: var(--component-bg-gradient);
+}
+
+.page-item__controls {
+  text-align: right;
+  padding-right: 0.5em;
+}
+
+.page-item__title {
+  color: var(--text-accent-color);
+}
+
+.page-item__body {
+  width: 100%;
+}
+
+/* -- Image & Video -- */
+.video,
+.image {
+  display: flex;
+  width: 100%;
+  height: 250px;
+}
+
+.video__player,
+.image__holder {
+  text-align: center;
+  flex: 60% 1 1;
+}
+
+.video__title,
+.image__title {
+  flex: 40% 1 1;
+  margin-left: 0.5em;
+}
+
+.video__iframe {
+  border: none;
+  width: 80%;
+}
+
+.image__thumbnail {
+  width: 100%;
+}
+
+/* -- Note -- */
+.note {
+  padding: 0.5em;
+}
+/* -- TODO -- */
+.todo {
+  padding: 0.5em;
+}
+
+.todo__list,
+.todo-label {
+  padding: 1em;
+  color: var(--smokywhite);
+}
+
+/* ---- Drag and Drop ---- */
+
+.mute-children * {
+  pointer-events: none;
+}
+
+.lifted {
+  animation: drag_start 250ms;
+  opacity: 0.2;
+}
+
+@keyframes drag_start {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+  }
+}
+
+.drop-area {
+  border: 2px solid var(--accent-color);
+}
+
 .hidden {
   display: none;
+}
+
+.option__container {
+  font-size: 1rem;
+  display: inline-flex;
+  -webkit-box-align: center;
+  align-items: center;
+  height: 2rem;
+  border-radius: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  background: rgb(241, 243, 245);
+  color: rgb(12, 166, 120);
+  margin-right: 0.75rem;
+  transition: all 0.125s ease-in 0s;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+  animation: 0.125s ease-in-out 0s 1 normal forwards running iMKika;
 }

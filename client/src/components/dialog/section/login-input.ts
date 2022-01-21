@@ -28,14 +28,6 @@ export class LoginInputSection extends BaseComponent<HTMLElement> implements Inp
     };
   }
 
-  get email(): string {
-    const element = this.element.querySelector("#email")! as HTMLInputElement;
-    return element.value;
-  }
-  get password(): string {
-    const element = this.element.querySelector("#password")! as HTMLInputElement;
-    return element.value;
-  }
   set email(text: string) {
     const element = this.element.querySelector("#email")! as HTMLInputElement;
     element.value = text;
@@ -46,7 +38,9 @@ export class LoginInputSection extends BaseComponent<HTMLElement> implements Inp
   }
 
   getAllInputData(): { email: string; password: string } {
-    return { email: this.email, password: this.password };
+    const email = this.element.querySelector("#email")! as HTMLInputElement;
+    const password = this.element.querySelector("#password")! as HTMLInputElement;
+    return { email: email.value, password: password.value };
   }
 
   setOnSubmitListenr(SubmitListenr: () => void) {
