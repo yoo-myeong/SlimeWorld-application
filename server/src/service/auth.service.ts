@@ -1,5 +1,5 @@
 import { getRepository, Repository } from "typeorm";
-import { authEntity, authEntityConstructor } from "../data/auth.entity.js";
+import { authEntity, authEntityConstructor } from "../entity/auth.entity.js";
 
 export type userData = {
   id?: number;

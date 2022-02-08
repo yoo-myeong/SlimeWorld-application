@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { config } from "../config.js";
 import { userData, authService, authServiceConstructor } from "../service/auth.service.js";
-import { User } from "../data/auth.entity.js";
+import { User } from "../entity/auth.entity.js";
 
 export interface authController {
   singup(req: Request, res: Response): Promise<Response>;

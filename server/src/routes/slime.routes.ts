@@ -46,4 +46,9 @@ router.delete("/:id", (req, res) => {
   slimeController.deletePost(req, res);
 });
 
+router.get("/tag/:id", (req, res) => {
+  const slimeController: postController = new SlimeController(SlimeService);
+  slimeController.getTags(req, res);
+});
+
 export default router;

@@ -4,7 +4,7 @@ import {
   postEntityConstructor,
   postOptionEntity,
   postOptionEntityConstructor,
-} from "../data/slime.entity.js";
+} from "../entity/slime.entity.js";
 
 export type postData = {
   title: string;
@@ -19,6 +19,7 @@ export interface postService {
   getPost(): Promise<postEntity[]>;
   createPost(data: Partial<postData>, userId: number): Promise<postEntity>;
   deletePost(postId: string, userId: number): Promise<DeleteResult>;
+  getTags(id: string): Promise<postOptionEntity[]>;
 }
 
 export type postServiceConstructor = {
@@ -38,17 +39,15 @@ export class SlimeService implements postService {
   }
 
   async createPost(data: postData, userId: number): Promise<postEntity> {
-    const options = data.options;
-    delete data.options;
+    const { options, ...post } = data;
 
     const postModel = new this.postRepository();
     postModel.userId = userId;
-    const keys = Object.keys(data);
+    const keys = Object.keys(post);
     keys.forEach((key) => {
-      postModel[key] = data[key];
+      postModel[key] = post[key];
     });
-    const post = await this.slimeRepository.save(postModel);
-
+    const response = await this.slimeRepository.save(postModel);
     if (options) {
       options.forEach((option) => {
         const optionModel = new this.optionRepositroy();
@@ -58,14 +57,18 @@ export class SlimeService implements postService {
       });
     }
 
-    return post;
+    return response;
   }
 
   async deletePost(postId: string, userId: number): Promise<DeleteResult> {
     return this.slimeRepository
       .createQueryBuilder()
       .delete()
-      .where("id=:id, userId=:userId", { id: postId, userId })
+      .where("id=:id AND userId=:userId", { id: postId, userId })
       .execute();
+  }
+
+  async getTags(id: string): Promise<postOptionEntity[]> {
+    return this.slimeOptionRepository.find({ select: ["option"], where: { slimePostId: id } });
   }
 }

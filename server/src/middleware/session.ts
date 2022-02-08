@@ -14,6 +14,11 @@ declare module "express-session" {
 
 const connection = mysql2.createPool(config.db);
 const MySQLStore = expressMySqlSession(Session);
+const CrossOption = {
+  sameSite: "none",
+  secure: true,
+};
+const cookieOption = config.nodeEnv === "DEV" ? {} : CrossOption;
 const sessionStore = new MySQLStore({}, connection);
 export const sessionOption: Session.SessionOptions = {
   secret: config.session.secreatKey,
@@ -23,5 +28,6 @@ export const sessionOption: Session.SessionOptions = {
   cookie: {
     httpOnly: true,
     maxAge: 3600000,
+    ...cookieOption,
   },
 };
