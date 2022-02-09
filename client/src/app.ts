@@ -19,13 +19,17 @@ export class App {
     this.page = new PageComponent(PageItemComponent);
     this.page.attachTo(appRoot);
     const upload: uploadServiceContainer = new UploadComponent(InputDialog, ButtonComponent, mediaFetchService);
-    AuthProvider.build(AuthFetchService, InputDialog).then(() => {
-      if (App.position === "seller") {
-        upload.createUploadButton();
-        this.page.addChild(upload);
-      }
-    });
-    this.createMedia(upload);
+    AuthProvider.build(AuthFetchService, InputDialog)
+      .then(() => {
+        if (App.position === "seller") {
+          upload.createUploadButton();
+          this.page.addChild(upload);
+        }
+        this.createMedia(upload);
+      })
+      .catch(() => {
+        alert("로그인을 하면 게시물을 볼 수 있습니다.");
+      });
   }
 
   static reloadPage() {

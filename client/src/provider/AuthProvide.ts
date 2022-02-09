@@ -98,8 +98,8 @@ export class AuthProvider implements Authorize {
   }
 
   getLogoutClickListener() {
-    return () => {
-      this.authService.logout();
+    return async () => {
+      await this.authService.logout();
       App.username = undefined;
       App.position = undefined;
       App.reloadPage();

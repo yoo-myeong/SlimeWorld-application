@@ -43,10 +43,10 @@ export class UploadComponent extends BaseComponent<HTMLElement> {
   }
 
   getSectionSubmitListener(inputSection: InputSection, postType: "json" | "file") {
-    return () => {
+    return async () => {
       try {
         const formdata = inputSection.getAllInputData();
-        this.service.postMedia(formdata, postType);
+        await this.service.postMedia(formdata, postType);
         this.dialog && this.dialog.removeFrom(document.body);
         App.reloadPage();
       } catch (error) {
