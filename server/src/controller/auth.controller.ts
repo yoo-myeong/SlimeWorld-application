@@ -49,8 +49,11 @@ export class UserController implements authController {
     const { email, password }: userData = req.body;
     try {
       const user = await this.authService.getUserByEmail(email);
+      if (!user) {
+        return res.status(401).json({ message: "unAuthorized" });
+      }
       const compared = await bcrypt.compare(password, user.password);
-      if (!user || !compared) {
+      if (!compared) {
         return res.status(401).json({ message: "unAuthorized" });
       }
       req.session.is_logined = true;
