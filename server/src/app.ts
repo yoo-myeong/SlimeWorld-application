@@ -7,7 +7,7 @@ import session from "express-session";
 import express, { Request, Response } from "express";
 import { createConnection } from "typeorm";
 import { sessionOption } from "./middleware/session.js";
-import { config } from "./config.js";
+import { config } from "./config/config.js";
 import authRoutes from "./routes/auth.routes.js";
 import slimeRoutes from "./routes/slime.routes.js";
 

@@ -5,7 +5,7 @@ import multerS3 from "multer-s3";
 import path from "path";
 import { postController, SlimeController } from "../controller/slime.controller.js";
 import { SlimeService } from "../service/slime.service.js";
-import { config } from "../config.js";
+import { config } from "../config/config.js";
 
 export const router = express.Router();
 

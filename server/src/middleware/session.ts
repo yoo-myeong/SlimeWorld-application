@@ -1,7 +1,7 @@
 import mysql2 from "mysql2/promise";
 import * as Session from "express-session";
 import expressMySqlSession from "express-mysql2-session";
-import { config } from "../config.js";
+import { config } from "../config/config.js";
 
 declare module "express-session" {
   export interface SessionData {
