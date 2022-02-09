@@ -13,6 +13,8 @@ export type imageUploadFormat = {
 export interface mediaService {
   getMedia(writer?: string): Promise<any>;
   postMedia(data: any, postType: "json" | "file"): Promise<any>;
+  getDeleteMediaListener(id: number): () => Promise<void>;
+  getTagListener(id: number): () => Promise<{ option: string }[]>;
 }
 
 export type mediaServiceConstructor = {
@@ -30,6 +32,30 @@ export class mediaFetchService implements mediaService {
     return this.network.requestWithJson(url, {
       method: "GET",
     });
+  }
+
+  getDeleteMediaListener(id: number): () => Promise<void> {
+    return async () => {
+      try {
+        await this.network.request(`/slime/${id}`, {
+          method: "DELETE",
+        });
+      } catch (error) {
+        throw new Error("삭제 권한이 없습니다.");
+      }
+    };
+  }
+
+  getTagListener(id: number): () => Promise<{ option: string }[]> {
+    return async () => {
+      try {
+        return this.network.request(`/slime/tag/${id}`, {
+          method: "GET",
+        });
+      } catch (error) {
+        throw new Error("태그 없음");
+      }
+    };
   }
 
   async postMedia(data: any, postType: "json" | "file"): Promise<any> {
