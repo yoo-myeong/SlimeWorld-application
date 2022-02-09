@@ -31,9 +31,13 @@ router.get("/", (req, res) => {
 });
 
 router.post("/image", upload.single("image"), (req, res) => {
-  req.body.mediaURL = req.file["location"];
-  const slimeController: postController = new SlimeController(SlimeService);
-  slimeController.createPost(req, res);
+  try {
+    req.body.mediaURL = req.file["location"];
+    const slimeController: postController = new SlimeController(SlimeService);
+    slimeController.createPost(req, res);
+  } catch (e) {
+    throw new Error(`multer 이미지 처리 오류\n${e}`);
+  }
 });
 
 router.post("/video", (req, res) => {
