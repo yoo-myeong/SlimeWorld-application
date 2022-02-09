@@ -1,7 +1,7 @@
 import mysql2 from "mysql2/promise";
 import * as Session from "express-session";
 import expressMySqlSession from "express-mysql2-session";
-import { config } from "../config.js";
+import { config } from "../config/config.js";
 
 declare module "express-session" {
   export interface SessionData {
@@ -14,6 +14,11 @@ declare module "express-session" {
 
 const connection = mysql2.createPool(config.db);
 const MySQLStore = expressMySqlSession(Session);
+const CrossOption = {
+  sameSite: "none",
+  secure: true,
+};
+const cookieOption = config.nodeEnv === "DEV" ? {} : CrossOption;
 const sessionStore = new MySQLStore({}, connection);
 export const sessionOption: Session.SessionOptions = {
   secret: config.session.secreatKey,
@@ -23,5 +28,6 @@ export const sessionOption: Session.SessionOptions = {
   cookie: {
     httpOnly: true,
     maxAge: 3600000,
+    ...cookieOption,
   },
 };

@@ -41,8 +41,9 @@ export const config = {
     database: required("TYPEORM_DATABASE"),
     synchronize: true,
     logging: ["query"],
-    entities: ["dist/data/**/*.{js,ts}"],
+    entities: ["dist/entity/**/*.{js,ts}"],
     migrations: ["dist/migration/**/*.{js,ts}"],
     subscribers: ["dist/subscriber/**/*.{js,ts}"],
   },
+  nodeEnv: required("NODE_ENV"),
 };

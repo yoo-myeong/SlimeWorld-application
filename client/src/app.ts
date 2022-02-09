@@ -9,7 +9,7 @@ import { AuthFetchService } from "./service/auth.js";
 import { mediaFetchService } from "./service/media.js";
 import { ImageComponent } from "./components/page/item/image.js";
 
-export const baseURL = "http://localhost:8080";
+export const baseURL = document.getElementById("backendURL")!.innerText as string;
 
 export class App {
   static username?: string;

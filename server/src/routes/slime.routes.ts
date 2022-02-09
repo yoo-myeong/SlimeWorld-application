@@ -5,7 +5,7 @@ import multerS3 from "multer-s3";
 import path from "path";
 import { postController, SlimeController } from "../controller/slime.controller.js";
 import { SlimeService } from "../service/slime.service.js";
-import { config } from "../config.js";
+import { config } from "../config/config.js";
 
 export const router = express.Router();
 
@@ -44,6 +44,11 @@ router.post("/video", (req, res) => {
 router.delete("/:id", (req, res) => {
   const slimeController: postController = new SlimeController(SlimeService);
   slimeController.deletePost(req, res);
+});
+
+router.get("/tag/:id", (req, res) => {
+  const slimeController: postController = new SlimeController(SlimeService);
+  slimeController.getTags(req, res);
 });
 
 export default router;

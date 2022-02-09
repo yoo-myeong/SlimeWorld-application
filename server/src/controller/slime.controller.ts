@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import { SlimeOption, SlimePost } from "./../data/slime.entity.js";
+import { SlimeOption, SlimePost } from "../entity/slime.entity.js";
 import { postData, postService, postServiceConstructor } from "./../Service/slime.service.js";
 
 export interface postController {
   getPost(req: Request, res: Response): Promise<Response>;
   createPost(req: Request, res: Response): Promise<Response>;
   deletePost(req: Request, res: Response): Promise<Response>;
+  getTags(req: Request, res: Response): Promise<Response>;
 }
 
 export type postControllerConstructor = {
@@ -47,6 +48,16 @@ export class SlimeController implements postController {
     } catch (error) {
       console.error(error);
       return res.sendStatus(403);
+    }
+  }
+
+  async getTags(req: Request, res: Response): Promise<Response> {
+    const id = req.params.id;
+    try {
+      const tags = await this.slimeService.getTags(id);
+      return res.status(201).json(tags);
+    } catch (error) {
+      return res.sendStatus(404);
     }
   }
 }
