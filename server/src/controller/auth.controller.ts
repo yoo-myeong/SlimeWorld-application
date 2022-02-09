@@ -1,5 +1,6 @@
-import { Request, Response } from "express";
 import bcrypt from "bcrypt";
+import "express-async-errors";
+import { Request, Response } from "express";
 import { config } from "../config/config.js";
 import { userData, authService, authServiceConstructor } from "../service/auth.service.js";
 import { User } from "../entity/auth.entity.js";
@@ -34,14 +35,13 @@ export class UserController implements authController {
     const EmailExitance = await this.checkEmailExitance(email);
     if (EmailExitance) return res.status(409).json({ message: "이미 존재하는 이메일입니다." });
     const hashedPassword = await bcrypt.hash(password, config.bcrypt.saltRounds);
-    const hashedSignupData = { email, password: hashedPassword, username, position };
+    const data = { email, password: hashedPassword, username, position };
     try {
-      await this.authService.createUser(hashedSignupData);
+      await this.authService.createUser(data);
       return res.sendStatus(201);
-    } catch (error) {
-      console.error(error);
+    } catch (e) {
       req.session.destroy(() => {});
-      return res.status(400).json({ message: "잘못된 형식의 데이터 전달" });
+      throw new Error(`계정 생성 실패\n${e}`);
     }
   }
 
@@ -49,11 +49,8 @@ export class UserController implements authController {
     const { email, password }: userData = req.body;
     try {
       const user = await this.authService.getUserByEmail(email);
-      if (!user) {
-        return res.status(401).json({ message: "unAuthorized" });
-      }
       const compared = await bcrypt.compare(password, user.password);
-      if (!compared) {
+      if (!user || !compared) {
         return res.status(401).json({ message: "unAuthorized" });
       }
       req.session.is_logined = true;
@@ -63,9 +60,8 @@ export class UserController implements authController {
       req.session.save(() => {
         return res.status(202).json({ username: user.username, position: user.position });
       });
-    } catch (error) {
-      console.error(error);
-      return res.sendStatus(400);
+    } catch (e) {
+      throw new Error(`로그인 실패\n${e}`);
     }
   }
 

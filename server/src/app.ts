@@ -10,6 +10,7 @@ import { sessionOption } from "./middleware/session.js";
 import { config } from "./config/config.js";
 import authRoutes from "./routes/auth.routes.js";
 import slimeRoutes from "./routes/slime.routes.js";
+import { logger, loggerStream } from "./config/winston.js";
 
 const corsOption = {
   origin: config.cors.allowedOrigin,
@@ -24,7 +25,7 @@ createConnection({
   .then(() => {
     const app = express();
     app.use(express.json());
-    app.use(morgan("tiny"));
+    app.use(morgan("short", { stream: new loggerStream() }));
     app.use(helmet());
     app.use(cors(corsOption));
     app.use(session(sessionOption));
@@ -37,14 +38,15 @@ createConnection({
     });
 
     app.use((err: any, req: Request, res: Response) => {
-      console.error("err");
+      logger.error(err);
       res.sendStatus(500);
     });
 
-    app.listen(4200, () => {
-      console.log("server starts");
+    const port = 4200;
+    app.listen(port, () => {
+      logger.info(`server started on ${port}`);
     });
   })
   .catch((err) => {
-    console.log(err);
+    logger.error(err);
   });

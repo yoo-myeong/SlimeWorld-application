@@ -1,3 +1,4 @@
+import "express-async-errors";
 import { Request, Response } from "express";
 import { SlimeOption, SlimePost } from "../entity/slime.entity.js";
 import { postData, postService, postServiceConstructor } from "./../Service/slime.service.js";
@@ -20,8 +21,12 @@ export class SlimeController implements postController {
   }
 
   async getPost(req: Request, res: Response): Promise<Response> {
-    const post = await this.slimeService.getPost();
-    return res.status(201).json(post);
+    try {
+      const post = await this.slimeService.getPost();
+      return res.status(201).json(post);
+    } catch (e) {
+      throw new Error(`슬라임 게시물 가져오기 실패\n${e}`);
+    }
   }
 
   async createPost(req: Request, res: Response): Promise<Response> {
@@ -29,13 +34,12 @@ export class SlimeController implements postController {
     if (!req.session.is_logined) {
       return res.status(403).json({ message: "로그인이 필요합니다." });
     }
+    const userId = req.session.userId;
     try {
-      const userId = req.session.userId;
       const post = await this.slimeService.createPost(data, userId);
       return res.status(200).json({ postId: post.id });
-    } catch (error) {
-      console.error(error);
-      return res.sendStatus(400);
+    } catch (e) {
+      throw new Error(`슬라임 게시물 생성 실패\n${e}`);
     }
   }
 
@@ -45,9 +49,8 @@ export class SlimeController implements postController {
     try {
       await this.slimeService.deletePost(postId, userId);
       return res.sendStatus(204);
-    } catch (error) {
-      console.error(error);
-      return res.sendStatus(403);
+    } catch (e) {
+      throw new Error(`슬라임 게시물 삭제 실패\n${e}`);
     }
   }
 
@@ -56,8 +59,8 @@ export class SlimeController implements postController {
     try {
       const tags = await this.slimeService.getTags(id);
       return res.status(201).json(tags);
-    } catch (error) {
-      return res.sendStatus(404);
+    } catch (e) {
+      throw new Error(`슬라임 게시물의 태그 가져오기 실패\n${e}`);
     }
   }
 }

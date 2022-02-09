@@ -39,10 +39,18 @@ export class App {
     media.forEach((mediaElement) => {
       if (mediaElement.media === "video") {
         const item = new VideoComponent(mediaElement);
-        this.page.addItem(item);
+        this.page.addItem(
+          item,
+          upload.service.getDeleteMediaListener(mediaElement.id),
+          upload.service.getTagListener(mediaElement.id)
+        );
       } else if (mediaElement.media === "image") {
         const item = new ImageComponent(mediaElement);
-        this.page.addItem(item);
+        this.page.addItem(
+          item,
+          upload.service.getDeleteMediaListener(mediaElement.id),
+          upload.service.getTagListener(mediaElement.id)
+        );
       }
     });
   }
