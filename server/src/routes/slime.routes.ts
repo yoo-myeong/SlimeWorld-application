@@ -6,6 +6,7 @@ import path from "path";
 import { postController, SlimeController } from "../controller/slime.controller.js";
 import { SlimeService } from "../service/slime.service.js";
 import { config } from "../config/config.js";
+import { logger } from "../config/winston.js";
 
 export const router = express.Router();
 
@@ -45,9 +46,14 @@ router.post("/video", (req, res) => {
   slimeController.createPost(req, res);
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
   const slimeController: postController = new SlimeController(SlimeService);
-  slimeController.deletePost(req, res);
+  try {
+    await slimeController.deletePost(req, res);
+  } catch (e) {
+    logger.error(e);
+    res.sendStatus(403);
+  }
 });
 
 router.get("/tag/:id", (req, res) => {

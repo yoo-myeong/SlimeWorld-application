@@ -1,3 +1,4 @@
+import { logger } from "./../config/winston";
 import "express-async-errors";
 import { Request, Response } from "express";
 import { SlimeOption, SlimePost } from "../entity/slime.entity.js";
@@ -50,7 +51,8 @@ export class SlimeController implements postController {
       await this.slimeService.deletePost(postId, userId);
       return res.sendStatus(204);
     } catch (e) {
-      throw new Error(`슬라임 게시물 삭제 실패\n${e}`);
+      logger.error(e);
+      return res.sendStatus(403);
     }
   }
 

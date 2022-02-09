@@ -61,11 +61,19 @@ export class SlimeService implements postService {
   }
 
   async deletePost(postId: string, userId: number): Promise<DeleteResult> {
+    const post = await this.getPostUserIdById(postId);
+    if (post.userId !== userId) {
+      throw new Error("삭제 권한 없음");
+    }
     return this.slimeRepository
       .createQueryBuilder()
       .delete()
       .where("id=:id AND userId=:userId", { id: postId, userId })
       .execute();
+  }
+
+  async getPostUserIdById(id: string) {
+    return this.slimeRepository.findOne({ select: ["userId"], where: { id } });
   }
 
   async getTags(id: string): Promise<postOptionEntity[]> {
