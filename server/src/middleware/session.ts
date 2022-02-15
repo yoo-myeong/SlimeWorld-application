@@ -20,7 +20,8 @@ const CrossOption = {
 };
 const ProxyOption = config.nodeEnv === "DEV" ? undefined : true;
 const cookieOption = config.nodeEnv === "DEV" ? {} : CrossOption;
-const sessionStore = new MySQLStore({}, connection);
+const sessionStore = new MySQLStore({ checkExpirationInterval: 100000 }, connection);
+
 export const sessionOption: Session.SessionOptions = {
   secret: config.session.secreatKey,
   resave: false,
