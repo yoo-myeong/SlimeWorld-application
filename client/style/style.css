@@ -20,7 +20,7 @@
 }
 
 :root {
-  --bg-main-color: #00000080;
+  --bg-main-color: #f58ce3;
   --bg-accent-color: #2d2d2d;
   --accent-color: #f64435;
   --blue: #3562f6;
@@ -28,7 +28,7 @@
   --text-edit-bg-color: #575757;
   --border-color: #3f3f3f;
   --shadow-color: #202020;
-  --document-bg-color: #68686850;
+  --document-bg-color: #ffffffa4;
   --component-bg-gradient: radial-gradient(circle, #646464e6 0%, #363636e6 100%);
   --smokywhite: #dddbd8;
   --black: #000000;
@@ -78,6 +78,7 @@ textarea {
 }
 
 body {
+  background-image: url("./background.png");
   font-family: "InfinitySans-RegularA1";
   display: flex;
   justify-content: center;
@@ -181,7 +182,7 @@ body {
   display: flex;
   flex-direction: column;
   padding: 0.4em;
-  width: 23em;
+  width: 20rem;
   background: var(--bg-accent-color);
   background: var(--component-bg-gradient);
   border: 1px solid var(--border-color);
