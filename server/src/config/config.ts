@@ -32,18 +32,5 @@ export const config = {
       secretAccessKey: required("S3_SECRET_ACCESS_KEY") as string,
     },
   },
-  typeorm: {
-    type: required("TYPEORM_TYPE") as "mysql",
-    host: required("TYPEORM_HOST"),
-    port: required("TYPEORM_PORT"),
-    username: required("TYPEORM_USERNAME"),
-    password: required("TYPEORM_PASSWORD"),
-    database: required("TYPEORM_DATABASE"),
-    synchronize: true,
-    logging: ["query"],
-    entities: ["dist/entity/**/*.{js,ts}"],
-    migrations: ["dist/migration/**/*.{js,ts}"],
-    subscribers: ["dist/subscriber/**/*.{js,ts}"],
-  },
   nodeEnv: required("NODE_ENV"),
 };

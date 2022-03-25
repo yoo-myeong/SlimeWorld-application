@@ -1,52 +1,60 @@
 import "reflect-metadata";
-import "express-async-errors";
 import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
+import Container from "typedi";
 import session from "express-session";
-import express, { Request, Response } from "express";
-import { createConnection } from "typeorm";
-import { sessionOption } from "./middleware/session.js";
-import { config } from "./config/config.js";
-import authRoutes from "./routes/auth.routes.js";
-import slimeRoutes from "./routes/slime.routes.js";
-import { logger, loggerStream } from "./config/winston.js";
+import express, { Express } from "express";
+import { Server } from "http";
+import { createExpressServer, useContainer } from "routing-controllers";
+import { sessionOption } from "./middleware/session";
+import { config } from "./config/config";
+import { logger, loggerStream } from "./config/winston";
+import { connectDatabase } from "./config/database";
+import { UserController } from "./controller/auth.controller";
 
-const corsOption = {
-  origin: config.cors.allowedOrigin,
-  optionSuccessStatus: 200,
-  credentials: true,
-};
+export class App {
+  public app: Express;
 
-const typeorm: any = config.typeorm;
-createConnection({
-  ...typeorm,
-})
-  .then(() => {
-    const app = express();
-    app.use(express.json());
-    app.use(morgan("short", { stream: new loggerStream() }));
-    app.use(helmet());
-    app.use(cors(corsOption));
-    app.use(session(sessionOption));
-
-    app.use("/auth", authRoutes);
-    app.use("/slime", slimeRoutes);
-
-    app.use((req: Request, res: Response) => {
-      res.sendStatus(404);
+  constructor() {
+    useContainer(Container);
+    this.app = createExpressServer({
+      controllers: [UserController],
     });
+    this.setDatabase();
+    this.setMiddleware();
+  }
 
-    app.use((err: any, req: Request, res: Response) => {
-      logger.error(err);
-      res.sendStatus(500);
-    });
-
-    const port = 4200;
-    app.listen(port, () => {
+  public startServer(port: number): Server {
+    const server = this.app.listen(port, () => {
       logger.info(`server started on ${port}`);
     });
-  })
-  .catch((err) => {
-    logger.error(err);
-  });
+    return server;
+  }
+
+  public stopServer(server: Server): void {
+    server.close();
+  }
+
+  private async setDatabase() {
+    try {
+      await connectDatabase();
+    } catch (e) {
+      logger.error(e);
+    }
+  }
+
+  private setMiddleware() {
+    this.app.use(express.json());
+    this.app.use(helmet());
+    this.app.use(morgan("short", { stream: new loggerStream() }));
+    this.app.use(session(sessionOption));
+    this.app.use(
+      cors({
+        origin: config.cors.allowedOrigin,
+        optionsSuccessStatus: 200,
+        credentials: true,
+      })
+    );
+  }
+}
