@@ -1,10 +1,8 @@
+import bcrypt from "bcrypt";
+import { getRepository } from "typeorm";
 import passport from "passport";
 import passportLocal from "passport-local";
-
-const authData = [
-    { id: 0, email: "con@email.com", password: "abcd1234" },
-    { id: 1, email: "ab@email.com", password: "abcd1234" },
-];
+import { User } from "../entity/users/users.entity";
 
 const LocalStrategy = passportLocal.Strategy;
 
@@ -12,8 +10,16 @@ passport.serializeUser((user: any, done) => {
     done(null, user.id);
 });
 
-passport.deserializeUser((id: any, done) => {
-    done(null, authData[id]);
+passport.deserializeUser(async (id: any, done) => {
+    try {
+        const user = await getRepository(User).findOne({ where: { id } });
+        done(null, {
+            username: user.username,
+            position: user.position,
+        });
+    } catch (e) {
+        done(null, null);
+    }
 });
 
 passport.use(
@@ -23,10 +29,18 @@ passport.use(
             passwordField: "password",
             session: true,
         },
-        (email, password, done) => {
-            if (email !== "con@email.com") return done(null, false, { message: "wrong" });
-            if (password !== "abcd1234") return done(null, false, { message: "wrong" });
-            return done(null, authData[0]);
+        async (email, password, done) => {
+            const user = await getRepository(User).findOne({ email });
+            if (!user) {
+                return done(null, false, { message: "wrong" });
+            }
+
+            const compared = await bcrypt.compare(password, user.password);
+            if (!compared) {
+                return done(null, false, { message: "wrong" });
+            }
+
+            return done(null, user);
         },
     ),
 );

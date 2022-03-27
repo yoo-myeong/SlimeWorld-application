@@ -23,7 +23,8 @@ export class UsersController {
     @UseBefore(passport.authenticate("local"))
     @Post("/login")
     public async login(@Req() req: any) {
-        return req.user;
+        const { username, position } = req.user;
+        return { username, position };
     }
 
     @HttpCode(200)
