@@ -1,60 +1,67 @@
 import "reflect-metadata";
 import morgan from "morgan";
-import helmet from "helmet";
-import cors from "cors";
-import Container from "typedi";
+import { Container } from "typeorm-typedi-extensions";
 import session from "express-session";
 import express, { Express } from "express";
 import { Server } from "http";
-import { createExpressServer, useContainer } from "routing-controllers";
-import { sessionOption } from "./middleware/session";
+import { useExpressServer, useContainer } from "routing-controllers";
+import { sessionOption } from "./utils/session";
 import { config } from "./config/config";
 import { logger, loggerStream } from "./config/winston";
 import { connectDatabase } from "./config/database";
-import { UserController } from "./controller/auth.controller";
+import { UsersController } from "./controller/users/users.controller";
+import passport from "passport";
+import bodyParser from "body-parser";
 
 export class App {
-  public app: Express;
+    private app: Express;
 
-  constructor() {
-    useContainer(Container);
-    this.app = createExpressServer({
-      controllers: [UserController],
-    });
-    this.setDatabase();
-    this.setMiddleware();
-  }
-
-  public startServer(port: number): Server {
-    const server = this.app.listen(port, () => {
-      logger.info(`server started on ${port}`);
-    });
-    return server;
-  }
-
-  public stopServer(server: Server): void {
-    server.close();
-  }
-
-  private async setDatabase() {
-    try {
-      await connectDatabase();
-    } catch (e) {
-      logger.error(e);
+    constructor() {
+        this.app = express();
+        this.setDatabase();
+        this.setMiddleware();
     }
-  }
 
-  private setMiddleware() {
-    this.app.use(express.json());
-    this.app.use(helmet());
-    this.app.use(morgan("short", { stream: new loggerStream() }));
-    this.app.use(session(sessionOption));
-    this.app.use(
-      cors({
-        origin: config.cors.allowedOrigin,
-        optionsSuccessStatus: 200,
-        credentials: true,
-      })
-    );
-  }
+    public startServer(port: number): Server {
+        const server = this.app.listen(port, () => {
+            logger.info(`server started on ${port}`);
+        });
+        return server;
+    }
+
+    public stopServer(server: Server): void {
+        server.close();
+    }
+
+    /**
+     * 세팅
+     */
+    public setExpress(): void {
+        useContainer(Container);
+        useExpressServer(this.app, {
+            cors: {
+                origin: config.cors.allowedOrigin,
+                optionsSuccessStatus: 200,
+                credentials: true,
+            },
+            controllers: [UsersController],
+        });
+    }
+
+    private async setDatabase(): Promise<void> {
+        try {
+            await connectDatabase();
+        } catch (e) {
+            logger.error(e);
+        }
+    }
+
+    private setMiddleware(): void {
+        this.app.use(bodyParser.json());
+        this.app.use(bodyParser.urlencoded({ extended: false }));
+        this.app.use(session(sessionOption));
+        this.app.use(morgan("short", { stream: new loggerStream() }));
+        this.app.use(passport.initialize());
+        this.app.use(passport.session());
+    }
 }
