@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany } from "typeorm";
-import { SlimePost } from "../slime.entity";
+import { Slime } from "../slime/slime.entity";
 import { BasicEntity } from "../base.entity";
 
 @Entity()
@@ -16,6 +16,6 @@ export class User extends BasicEntity {
     @Column()
     position: "seller" | "buyer";
 
-    @OneToMany(() => SlimePost, (slime_post) => slime_post.user)
-    slime_posts: SlimePost[];
+    @OneToMany(() => Slime, (slime) => slime.user)
+    slime: Slime[];
 }

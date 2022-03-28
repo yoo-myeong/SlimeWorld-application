@@ -8,7 +8,7 @@ export class SignupReqeust {
     @MaxLength(20)
     readonly password: string;
 
-    @MinLength(1)
+    @MinLength(2)
     readonly username: string;
 
     @IsString({ groups: ["seller", "buyer"] })

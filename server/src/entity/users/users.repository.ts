@@ -1,13 +1,6 @@
+import { SignupReqeust } from "./../../controller/users/dto/signupRequest";
 import { EntityRepository, Repository } from "typeorm";
 import { User } from "./users.entity";
-
-export type userData = {
-    id?: number;
-    email?: string;
-    username?: string;
-    password?: string;
-    position?: "seller" | "buyer";
-};
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
@@ -15,7 +8,7 @@ export class UserRepository extends Repository<User> {
         return this.findOne({ email });
     }
 
-    createOne(data: userData) {
+    createOne(data: SignupReqeust) {
         return this.insert(data);
     }
 }

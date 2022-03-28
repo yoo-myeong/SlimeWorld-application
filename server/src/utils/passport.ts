@@ -14,6 +14,7 @@ passport.deserializeUser(async (id: any, done) => {
     try {
         const user = await getRepository(User).findOne({ where: { id } });
         done(null, {
+            id: user.id,
             username: user.username,
             position: user.position,
         });
