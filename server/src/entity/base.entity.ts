@@ -1,7 +1,6 @@
 import { CreateDateColumn, PrimaryGeneratedColumn } from "typeorm";
-import { ValidationEntity } from "../validation/validation.js";
 
-export abstract class BasicEntity extends ValidationEntity {
+export abstract class BasicEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
