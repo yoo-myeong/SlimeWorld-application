@@ -1,63 +1,45 @@
-# slimeWorld-application
+# ✍ 개요
 
-# 개요
+슬라임 장난감 정보와 판매처를 공유하기 위한 슬라임 전용 SNS애플리케이션을 제작
 
-슬라임 장난감은 ASMR과 비슷한 청각 자극과 함께 촉각을 자극하여 많은 여성들의 인기를 끌고 있다. 그에 따라 저렴한 슬라임, 질 좋은 슬라임 등 다양한 종류의 슬라임이 나오고 있으며 부속 부품인 비즈, 엑티베이터 등도 함께 판매되고 있다. 구매자들은 **인스타 검색**이나 **유튜브 검색**을 통해 슬라임의 판매 정보를 얻을 수 있다.
+---
 
-하지만 **위 검색 시스템을 통해서는 슬라임에 대한 정보들이 규격화 되어있지 않아**서 찾아보기 불편한 점이 있다.
+# 🎯 설계 목표
 
-그래서 판매자들이 슬라임의 특징을 옵션으로 추가하고 사진, 영상과 함께 판매처를 업로드 할 수 있으며, 구매자는 태그가 달린 게시글을 확인하면서 판매처로 이동할 수 있는 웹애플리케이션인 **슬라임세상**을 기획하게 되었다.
+- Express에 **TypeScript를 적용**해서 보다 안정적으로 프로그램을 설계
+- **vanillaJS에 OOP를 적극 활용**하여 프론트엔드 웹앱 설계
+- ec2, rds, s3 등 다양한 **AWS 서비스 활용**
+- **GIT CLI를 사용**한 프로젝트 버전 관리
 
-> 💡 **판매자** : 옵션, 이미지파일(또는 영상링크), 판매처 업로드
->
-> **구매자** : 게시글 태그 확인, 판매처 이동
+---
 
-<br>
+# 🛠 주요 기능
 
-# 서비스 구조
+- VanilaJS만으로 제작한 **새로고침 없는 웹앱**
+- **SSL**이 적용된 웹서비스
+- **세션 쿠키**를 통한 로그인 상태 관리
+- 게시물 **생성, 조회, 삭제**
+- 게시물 **태그 조회**
+- **클라우드 스토리지**에 이미지 저장, 조회, 삭제
 
-### 🔎 로그인해서 게시물 가져오기
+---
+# 😎 트러블슈팅
 
-<img src="./spec/image/로그인해서-게시물-가져오기.gif" width="500px">
+- [routing-controller와 typedi를 활용](https://github.com/yoo-myeong/SlimeWorld-application/pull/13)하여 DIP를 유지하면서 백엔드의 OOP 코드를 정돈
+- [프로젝트의 express-mysql-session 패키지 코드를 분석 및 수정](https://velog.io/@c-on/TS-express-%EC%84%B8%EC%85%98-%EC%9D%B8%EC%A6%9D#%EC%98%A4%EB%A5%98-2-mysql%EC%97%B0%EB%8F%99-%EC%98%A4%EB%A5%98)해서 MySQL 8.0.과 호환시킴
+- nginx를 사용하여 [ALB 리다이렉팅에서 발생하는 method오류 해결](https://velog.io/@c-on/AWS-nodeJS%EC%95%B1-%EB%8F%84%EB%A9%94%EC%9D%B8%EC%97%B0%EA%B2%B0-%EB%B0%8F-SSL%EC%84%A4%EC%A0%95Route53Certificate-Manager%EB%A1%9C%EB%93%9C%EB%B0%B8%EB%9F%B0%EC%8B%B1NGINX#%EC%98%A4%EB%A5%98)
 
-<br>
+---
 
-### 🔎 이미지 게시물 업로드
+# ⚗ 배운 것
 
-<img src="./spec/image/이미지-게시물-업로드.gif" width="500px">
+- `routing-controllers`와 `typedi`를 활용하여 **백엔드의 코드를 객체지향으로 프로그래밍**
+- `vanilaJS`에 `의존성주입`을 적용하여 **컴포넌트의 재사용성을 고려**해보면서, `OOP`의 이점을 갖기 위해 어떻게 설계해야하는지 고민하고 공부할 수 있었음
+- `ALB`, `route53`, `certicication`로 **SSL을 적용해서 보안성을 강화**
+- `AWS S3`로 이미지 서버를 구축하고, `multer-s3`와 `aws-sdk` 를 사용해서 **요청받은 이미지를 클라우드 서버에 저장하고 조회**
+- `express-session`과 `express-mysql-session`을 활용해서 MySQL을 세션저장소로 사용한 세션쿠키 로그인을 구현했고, **JWT와 세션쿠키 각각의 장단점과 차이를 이해**함
+- 인스턴스에 `nginx`를 설치해서 프록시 서버로 사용하고 **http→https 리다이렉션 기능을 구현**
+- `pm2`를 사용해서 aws 인스턴스에 **무중단 node.js서버 구축**
+- `netlify`에 프론트엔드 프로젝트를 배포해보고 **배포자동화의 편리함을 경험**
 
-<br>
-
-### 🔎 동영상 게시물 업로드
-
-<img src="./spec/image/동영상-게시물-업로드.gif" width="500px">
-
-<br>
-
-### 🔎 게시물 완전 삭제
-
-<img src="./spec/image/게시물-완전-삭제.gif" width="500px">
-
-<br>
-
-<br>
-
-# 설계
-
-### 🔎 DataBase
-
-<img src="./spec/image/erd.png" width="300px">
-
-<br>
-
-### 🔎 Backend
-
-[/auth/\* API](./spec/api/authAPI.md)
-
-[/slime/\* API](./spec/api/slimeAPI.md)
-
-<br>
-
-### 🔎 Frontend
-
-<img src="./spec/image/proto.drawio.png" width="500px">
+---
